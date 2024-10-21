@@ -53,17 +53,17 @@ Komutlar:
 - ilk olarak microsoft store'dan powershell preview yada powershell  indiriyoruz sonra sında  
 
 ### Scoop install 
-| ----- | ------------------------ | ---------- | --- |
-"Set-ExecutionPolicy RemoteSigned -Scope CurrentUser" Description : PowerShell Execution Policy Ayarlarını Güncelle | PowerShell  ✅ |
-| irm get.scoop.sh | iex   |  Description : Scoop indiriyoruz | PowerShell  ✅ |
-| scoop --version  |  Description : Scoop test et | PowerShell  ✅ | Scoop ✅ |
-| scoop install fzf  |  Description : Fzf modülünü yüklüyoruz | PowerShell  ✅ | Scoop ✅ |
-| scoop install bat  |  Description : Ctrl+f için gerekli modül | PowerShell  ✅ | Scoop ✅ | fzf ✅ |
+
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser Acıklama : PowerShell Execution Policy Ayarlarını Güncelle,
+irm get.scoop.sh  iex  - Acıklama : Scoop indiriyoruz.
+scoop --version  -  Acıklama : Scoop test et.
+scoop install fzf   Acıklama : Fzf modülünü yüklüyoruz.
+scoop install bat   Acıklama : Ctrl+f için gerekli modül.
 
 
 ### Powershell Terminal
-| Install-Module -Name Terminal-Icons -Scope CurrentUser  |  Description : Bu Terminal-ıcons terminalde iconların daha güzel görünmesi için. | PowerShell  ✅ |
-| Install-Module -Name PSFzf -Scope CurrentUser  |  Description : Ctrl+f & Ctrl+r için yüklenmesi gereken modül | PowerShell  ✅ |
+Install-Module -Name Terminal-Icons -Scope CurrentUser    Acıklama : Bu Terminal-ıcons terminalde iconların daha güzel görünmesi için.
+Install-Module -Name PSFzf -Scope CurrentUser    Acıklama : Ctrl+f & Ctrl+r için yüklenmesi gereken modül.
 
 
 ### NerdFont
@@ -78,5 +78,5 @@ Komutlar:
 ### hata
 -   74 |      [xml]$smiOutput = & 'nvidia-smi' -q -x  böyle bir hata alırsanız gpu sürücülerini doğru yüklediğinizden emin olun.
 
-### Kali linux 
-- Çok basit .bashrc kullandığınız kullanıcının ana kısmına kopyalayın bu kadar.
+### Dip Not
+- Kişisel dosyalarım olduğu için herhangi bir hatada yardımcı olmuyorum sizinle paylaşmak istedim sadece bir teşekkür yeterli olur.
