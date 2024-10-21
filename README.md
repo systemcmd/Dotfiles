@@ -54,7 +54,7 @@ Komutlar:
 
 ### Scoop install 
 | ----- | ------------------------ | ---------- | --- |
-| Set-ExecutionPolicy RemoteSigned -Scope CurrentUser   | Description : PowerShell Execution Policy Ayarlarını Güncelle | PowerShell  ✅ |
+"Set-ExecutionPolicy RemoteSigned -Scope CurrentUser" Description : PowerShell Execution Policy Ayarlarını Güncelle | PowerShell  ✅ |
 | irm get.scoop.sh | iex   |  Description : Scoop indiriyoruz | PowerShell  ✅ |
 | scoop --version  |  Description : Scoop test et | PowerShell  ✅ | Scoop ✅ |
 | scoop install fzf  |  Description : Fzf modülünü yüklüyoruz | PowerShell  ✅ | Scoop ✅ |
