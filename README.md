@@ -54,11 +54,11 @@ Komutlar:
 
 ### Scoop install 
 
-```Set-ExecutionPolicy RemoteSigned -Scope CurrentUser ``` Acıklama : PowerShell Execution Policy Ayarlarını Güncelle,
-```irm get.scoop.sh  iex ``` Acıklama : Scoop indiriyoruz.
-```scoop --version ```     Acıklama : Scoop test et.
-```scoop install fzf ```  Acıklama : Fzf modülünü yüklüyoruz.
-```scoop install bat ```  Acıklama : Ctrl+f için gerekli modül.
+- ```Set-ExecutionPolicy RemoteSigned -Scope CurrentUser ``` Acıklama : PowerShell Execution Policy Ayarlarını Güncelle,
+- ```irm get.scoop.sh  iex ``` Acıklama : Scoop indiriyoruz.
+- ```scoop --version ```     Acıklama : Scoop test et.
+- ```scoop install fzf ```  Acıklama : Fzf modülünü yüklüyoruz.
+- ```scoop install bat ```  Acıklama : Ctrl+f için gerekli modül.
 
 
 ### Powershell Terminal
