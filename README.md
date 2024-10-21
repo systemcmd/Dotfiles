@@ -78,5 +78,8 @@ Komutlar:
 ### hata
 -   74 |      [xml]$smiOutput = & 'nvidia-smi' -q -x  böyle bir hata alırsanız gpu sürücülerini doğru yüklediğinizden emin olun.
 
+### Kalilinux
+- Kali linux için .bashrc dosyasını içeriği kopyalayın yada direk kendisini kopyalayıp kullanıcı ana dizinine yapıştırın. Echo $SHELL yaparak kontrol sağlayın eğerki zsh'da iseniz bash gecin ctrl+f ve ctrl+r kullanmaya başlayın.
+
 ### Dip Not
 - Kişisel dosyalarım olduğu için herhangi bir hatada yardımcı olmuyorum sizinle paylaşmak istedim sadece bir teşekkür yeterli olur.
