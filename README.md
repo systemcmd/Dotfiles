@@ -5,8 +5,6 @@ $GitHubRepositoryAuthor = "Systemcmd"; `
 $GitHubRepositoryName = "Dotfiles"; `
 ```
 
-
-
 ## Bu Dotfiles Ne Yapar ?
 
 Bu dotfiles betiği aşağıdaki işlemleri gerçekleştirir:
@@ -20,14 +18,22 @@ Bu dotfiles betiği aşağıdaki işlemleri gerçekleştirir:
 - Hashcat ile parola kırma işlemleri yapmanızı sağlar.
 - Metasploit Framework destek olur.
 - Nmap ile ağ taramaları yapar.
+- Docker hakkında bilgi verir.
+- Redteam ile ilgili bilgi verir.
+- Blueteam ile ilgili bilgi verir.
 
 ## Windows Terminal System help
 
-![CTRL+F Komutu](https://github.com/systemcmd/Dotfiles/raw/main/images/CTRL+F.png)
-![CTRL+R Komutu](https://github.com/systemcmd/Dotfiles/raw/main/images/CTRL+R.jpg)
-![Nmap Menü](https://github.com/systemcmd/Dotfiles/raw/main/images/nmp.png)
 ![System Help](https://github.com/systemcmd/Dotfiles/raw/main/images/system%20help.png)
 
+
+![CTRL+F Komutu](https://github.com/systemcmd/Dotfiles/raw/main/images/CTRL+F.png)
+
+
+![CTRL+R Komutu](https://github.com/systemcmd/Dotfiles/raw/main/images/CTRL+R.jpg)
+
+
+![Nmap Menü](https://github.com/systemcmd/Dotfiles/raw/main/images/nmp.png)
 
 ## Nasıl kurulur ? 
 
