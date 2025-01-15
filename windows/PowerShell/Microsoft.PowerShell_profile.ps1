@@ -11,6 +11,7 @@ $aliasList = @(
     @{ Name='csc'; Value='C:\Windows\Microsoft.NET\Framework\v4.0.30319\csc.exe' }
 )
 
+# Alias Definitions
 $aliasList | ForEach-Object { New-Alias -Name $_.Name -Value $_.Value }
 
 # ll function
@@ -69,6 +70,9 @@ if ($PSScriptRoot) {
     . "$PSScriptRoot\nmphcmfs\Hashcat.ps1"
     . "$PSScriptRoot\nmphcmfs\Msfconsole.ps1"
     . "$PSScriptRoot\nmphcmfs\dork.ps1"
+    . "$PSScriptRoot\nmphcmfs\dockerhelp.ps1"
+    . "$PSScriptRoot\\nmphcmfs\\blueteam.ps1"
+    . "$PSScriptRoot\\nmphcmfs\\redteam.ps1"
     . "$PSScriptRoot\pc\ip-bt.ps1"
     . "$PSScriptRoot\pc\ascii.ps1"
     . "$PSScriptRoot\pc\ram-gpu-cpu.ps1"
@@ -88,19 +92,33 @@ Mevcut Komutlar ve Fonksiyonlar:
 - Ctrl+f            : Dosya araması için kullanır.
 - Ctrl+r            : Ters geçmiş araması için kullanır.
 
+Aliaslar:
+- vim               : nvim için kısayol.
+- grep              : findstr için kısayol.
+- wn                : winget için kısayol.
+- sil               : cls (ekran temizleme) için kısayol.
+- tig               : Git için tig aracı.
+- less              : less komutuna gitmek için.
+- ifconfig          : ipconfig için kısayol.
+- st                : start komutuna gitmek için.
+- csc               : .NET derleyicisi için kısayol.
+
 Komutlar:
+- dockerhelp        : Docker ile ilgili bilgi alırsınız.
+- blueteam          : BlueTeam uygulamaları hakkında bilgi.
+- redteam           : RedTeam uygulamaları hakkında bilgi.
 - nmp               : Nmap komutları yardımcı menü.
 - hc                : Hashcat yardımcı menü.
 - msf               : Metasploit yardımcı menü.
-- dork              : GoogleDorking  menü.
+- dork              : GoogleDorking menü.
 - ascii             : Cümle kodlama.
 - ip                : IP gösterir hem dış hem local.
 - pil               : Batarya bilgisini gösterir.
 - ram - gpu - cpu   : RAM, GPU ve CPU bilgileri gösterir.
 - bios              : BIOS bilgileri gösterir.
-- para              : Finansal hesaplamalar örnek para 50 yazın TR yaşıyorsanız lazım oluyor :)
+- para              : Finansal hesaplamalar. Örnek: para 50.
 
-Burası benim kisisel oluşturduğum kodlarım elimden geldiğince yardımcı olmaya çalıştım umarım sizede yararlı olur.
+Burası benim kişisel oluşturduğum kodlarım. Elimden geldiğince yardımcı olmaya çalıştım, umarım size de yararlı olur.
 "@
     Write-Host $helpText
 }
