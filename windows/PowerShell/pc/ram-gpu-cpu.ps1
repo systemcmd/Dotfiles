@@ -114,32 +114,57 @@ function GPU {
 
 
 function Disk {
-    $volumeBilgileri = Get-Volume | Where-Object { $_.DriveType -eq "Fixed" }
+    try {
+        # Kullanılabilir ve "Bilgisayarım" kısmında görünen sürücüleri al
+        $volumes = Get-Volume | Where-Object { 
+            $_.DriveType -eq "Fixed" -and $_.DriveLetter -ne $null -and $_.FileSystemLabel -ne $null 
+        }
 
-    $volumeBilgileri | ForEach-Object {
-        $driveLetter = $_.DriveLetter
-        $bosAlan_GB = [math]::Round($_.SizeRemaining / 1GB, 2)
-        $toplamAlan_GB = [math]::Round($_.Size / 1GB, 2)
-        $kullanilanAlan_GB = $toplamAlan_GB - $bosAlan_GB
-        $kullanilanYuzde = [math]::Round(($kullanilanAlan_GB / $toplamAlan_GB) * 100, 0)
+        if (-not $volumes) {
+            Write-Host "Bilgisayarınızda görüntülenebilir bir disk bulunamadı." -ForegroundColor Red
+            return
+        }
 
-        # Disk harfine göre fiziksel disk bilgisini al
-        $physicalDisk = Get-PhysicalDisk | Where-Object { $_.ObjectId -match ".*$driveLetter.*" }
-        $diskAdi = $physicalDisk.FriendlyName
+        Write-Host "==========================================" -ForegroundColor Cyan
+        Write-Host "          AKTIF DISK DETAYLARI            " -ForegroundColor Yellow
+        Write-Host "==========================================" -ForegroundColor Cyan
 
-        Write-Host "Disk Harfi: $driveLetter" -ForegroundColor Magenta
-        Write-Host "Disk Adi: $diskAdi" -ForegroundColor Cyan
-        Write-Host "Toplam Alan: " -NoNewline
-        Write-Host "$toplamAlan_GB GB" -ForegroundColor Blue
-        Write-Host "Kullanilan Alan: " -NoNewline
-        Write-Host "$kullanilanAlan_GB GB" -ForegroundColor Red
-        Write-Host "Bos Alan: " -NoNewline
-        Write-Host "$bosAlan_GB GB" -ForegroundColor Gray
+        $diskCounter = 1
 
-        # Basit bir progress bar gösterimi ve dolu/boş alan bilgisi
-        $dolu = '-' * $kullanilanYuzde
-        $bos = ' ' * (100 - $kullanilanYuzde)
-        Write-Host "Kullanım: [$dolu$bos] $kullanilanYuzde% Dolu" -ForegroundColor Green
-        Write-Host "============" -ForegroundColor Magenta
+        $volumes | ForEach-Object {
+            $driveLetter = $_.DriveLetter
+            $totalSpaceGB = [math]::Round($_.Size / 1GB, 2)
+            $freeSpaceGB = [math]::Round($_.SizeRemaining / 1GB, 2)
+            $usedSpaceGB = $totalSpaceGB - $freeSpaceGB
+            $usedPercentage = [math]::Round(($usedSpaceGB / $totalSpaceGB) * 100, 0)
+            $volumeLabel = $_.FileSystemLabel
+
+            # Diskin fiziksel bilgilerini al
+            $physicalDisk = Get-PhysicalDisk | Where-Object {
+                $_.DeviceID -match $_.ObjectId.Split(":")[-1]
+            }
+            $diskName = $physicalDisk.FriendlyName
+
+            # Kullanım çubuğu
+            $barLength = 30
+            $filledBars = [math]::Round(($usedPercentage / 100) * $barLength)
+            $emptyBars = $barLength - $filledBars
+            $usageBar = ("█" * $filledBars) + ("░" * $emptyBars)
+
+            # Bilgileri göster
+            Write-Host "`nDisk Adı    : $diskCounter      $diskName" -ForegroundColor Green
+            Write-Host "Etiket       : $volumeLabel" -ForegroundColor Cyan
+            Write-Host "Disk Harfi   : $driveLetter" -ForegroundColor Yellow
+            Write-Host "Toplam Alan  : $totalSpaceGB GB" -ForegroundColor Blue
+            Write-Host "Kullanılan   : $usedSpaceGB GB ($usedPercentage%)" -ForegroundColor Red
+            Write-Host "Boş Alan     : $freeSpaceGB GB" -ForegroundColor Gray
+            Write-Host "Kullanım     : [$usageBar]" -ForegroundColor Yellow
+            Write-Host "==========================================" -ForegroundColor Cyan
+
+            # Disk sırasını artır
+            $diskCounter++
+        }
+    } catch {
+        Write-Host "Bir hata oluştu: $_" -ForegroundColor Red
     }
 }
