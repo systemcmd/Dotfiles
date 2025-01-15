@@ -1,76 +1,117 @@
-# Dotfiles SystemCmd
+# 🌟 Dotfiles SystemCmd
 
-```Powershell
+```powershell
 $GitHubRepositoryAuthor = "Systemcmd"; `
 $GitHubRepositoryName = "Dotfiles"; `
 ```
 
-## Bu Dotfiles Ne Yapar ?
+---
 
-Bu dotfiles betiği aşağıdaki işlemleri gerçekleştirir:
+## 🚀 Proje Özeti
 
-- PowerShell profilinizi yapılandırır.
-- BIOS bilgilerinizi görüntüler.
-- Bilgisayarınızın IP adresini ve Bluetooth cihazlarını listeler.
-- Döviz kurlarını görüntüler.
-- Bilgisayarınızdaki RAM, GPU ve CPU kullanım bilgilerini toplar.
-- Google Dorking tekniklerini kullanarak aramalar yapar.
-- Hashcat ile parola kırma işlemleri yapmanızı sağlar.
-- Metasploit Framework destek olur.
-- Nmap ile ağ taramaları yapar.
-- Docker hakkında bilgi verir.
-- Redteam ile ilgili bilgi verir.
-- Blueteam ile ilgili bilgi verir.
+Bu **Dotfiles** betiği, sisteminizin verimli bir şekilde yönetilmesini sağlamak ve çeşitli güvenlik, bilgi toplama ve optimizasyon işlemleri gerçekleştirmek için tasarlanmıştır. Aşağıdaki işlevleri sunar:
 
-## Windows Terminal System help
+- ⚡ **PowerShell** profil yapılandırması.
+- 🔍 **BIOS**, **IP**, ve Bluetooth cihaz bilgisi görüntüleme.
+- 💹 Güncel döviz kurlarını görüntüleme.
+- 📊 **RAM**, **GPU**, ve **CPU** kullanım durumlarını analiz etme.
+- 🌐 **Google Dorking** teknikleriyle hızlı aramalar.
+- 🔑 **Hashcat** ile parola kırma.
+- 🛡️ **Metasploit Framework** desteği.
+- 🌐 **Nmap** ile ağ taramaları.
+- 🐳 **Docker** bilgileri ve rehberlik.
+- 🔴 **Redteam** ve 🔵 **Blueteam** görevleri hakkında bilgi.
 
+---
+
+## 💻 Windows Terminal System Help
+
+Komutlar ve fonksiyonlar, aşağıdaki görsellerde detaylandırılmıştır:
+
+### System Help
 ![System Help](https://github.com/systemcmd/Dotfiles/raw/main/images/system%20help.png)
 
-
+### CTRL+F Kullanımı
 ![CTRL+F Komutu](https://github.com/systemcmd/Dotfiles/raw/main/images/CTRL+F.png)
 
-
+### CTRL+R Kullanımı
 ![CTRL+R Komutu](https://github.com/systemcmd/Dotfiles/raw/main/images/CTRL+R.jpg)
 
-
+### Nmap Menü
 ![Nmap Menü](https://github.com/systemcmd/Dotfiles/raw/main/images/nmp.png)
 
-## Nasıl kurulur ? 
+---
 
-- Dosyaları indirdikten sonra dotfiles içerisindeki powershell klasörünü belgeler kısmına direk kopyalayın.
+## 🔧 Kurulum Rehberi
 
-- Yukarıdaki işlemi yapamazsanız Microsoft.PowerShell_profile içerisinde kodları $profile içerisine acıp içerisine kopyalayın bu işlemden sonra zaten belgeler kısmına powershell oluşturulucak tekrar kopyalama yapın.
+1. **Dotfiles İndirme**  
+   Dotfiles içerisindeki `powershell` klasörünü doğrudan `Belgeler` dizinine kopyalayın.
 
-- ilk olarak microsoft store'dan powershell preview yada powershell  indiriyoruz sonra sında  
+2. **Alternatif Yöntem**  
+   `Microsoft.PowerShell_profile` dosyasındaki kodları `$profile` içine yapıştırın. Ardından, `powershell` klasörünü oluşturulan `Belgeler` dizinine taşıyın.
 
-### Scoop install 
+3. **PowerShell Yükleme**  
+   Microsoft Store'dan **PowerShell Preview** veya **PowerShell** yükleyin.
 
-- ```Set-ExecutionPolicy RemoteSigned -Scope CurrentUser ``` Acıklama : PowerShell Execution Policy Ayarlarını Güncelle,
-- ```irm get.scoop.sh  iex ``` Acıklama : Scoop indiriyoruz.
-- ```scoop --version ```     Acıklama : Scoop test et.
-- ```scoop install fzf ```  Acıklama : Fzf modülünü yüklüyoruz.
-- ```scoop install bat ```  Acıklama : Ctrl+f için gerekli modül.
+---
 
+### 🛠️ Scoop Kurulumu
 
-### Powershell Terminal
-- ```Install-Module -Name Terminal-Icons -Scope CurrentUser```    Acıklama : Bu Terminal-ıcons terminalde iconların daha güzel görünmesi için.
-- ```Install-Module -Name PSFzf -Scope CurrentUser```    Acıklama : Ctrl+f & Ctrl+r için yüklenmesi gereken modül.
+Aşağıdaki adımları izleyerek gerekli araçları yükleyin:
 
+```powershell
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser  # PowerShell Policy Ayarları
+irm get.scoop.sh | iex                               # Scoop Yükleme
+scoop --version                                      # Scoop Test
+scoop install fzf                                    # fzf Modülü
+scoop install bat                                    # bat Modülü
+```
 
-### NerdFont
-- Aşağıdaki siteden hack nerdfont indirebilirsiniz terminalde iconlar vs daha düzügn gözükmesi için.
-- https://www.nerdfonts.com/font-downloads
+---
 
-### Terminal Settings
-- İsterseniz yükleyin bunu gerekli bir işlev değil sadece görüntü.
-- Terminal settings klasöründeki dosya için ise içeriğini kopyalayın C:\Users\kod\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json içerisine yapıştırın.
-- Fakat dosya yollarını falan kendinize göre düzenleyin yoksa powershell vs bozulur.
+### 🎨 Terminal Özelleştirme
 
-### hata
--   74 |      [xml]$smiOutput = & 'nvidia-smi' -q -x  böyle bir hata alırsanız gpu sürücülerini doğru yüklediğinizden emin olun.
+1. **Icons Modülü**  
+   ```powershell
+   Install-Module -Name Terminal-Icons -Scope CurrentUser
+   ```
 
-### Kalilinux
-- Kali linux için .bashrc dosyasını içeriği kopyalayın yada direk kendisini kopyalayıp kullanıcı ana dizinine yapıştırın. Echo $SHELL yaparak kontrol sağlayın eğerki zsh'da iseniz bash gecin ctrl+f ve ctrl+r kullanmaya başlayın.
+2. **Fzf Modülü**  
+   ```powershell
+   Install-Module -Name PSFzf -Scope CurrentUser
+   ```
 
-### Dip Not
-- Kişisel dosyalarım olduğu için herhangi bir hatada yardımcı olmuyorum sizinle paylaşmak istedim sadece bir teşekkür yeterli olur.
+3. **NerdFont Yükleme**  
+   [NerdFont Resmi Sitesi](https://www.nerdfonts.com/font-downloads) üzerinden uygun fontu indirin.
+
+---
+
+### 🛠️ Terminal Settings (İsteğe Bağlı)
+
+Terminalin görünümünü daha profesyonel yapmak için aşağıdaki işlemi gerçekleştirin:
+
+1. `C:\Users\kod\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json` dosyasını açın.
+2. Örnek ayarları bu dosyaya ekleyin ve gerekli yolları düzenleyin.
+
+---
+
+### 🐧 Kali Linux İçin Ekstra
+
+`.bashrc` dosyasını ana dizininize kopyalayın veya içeriğini ekleyin:
+```bash
+echo $SHELL  # Kontrol etmek için
+```
+Eğer `zsh` kullanıyorsanız, `bash`'a geçerek `ctrl+f` ve `ctrl+r` kullanımını aktif hale getirebilirsiniz.
+
+---
+
+## ⚠️ Önemli Notlar
+
+- 🛠️ Hatalarla ilgili doğrudan destek sağlamıyorum.
+- Paylaşımımla ilgilendiğiniz için teşekkür ederim! 😊
+
+---
+
+## 🏆 Destek ve Katkı
+
+Eğer projeyi beğendiyseniz, bir ⭐ bırakmayı unutmayın! 🧑‍💻
