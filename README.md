@@ -23,26 +23,11 @@ Bu dotfiles betiği aşağıdaki işlemleri gerçekleştirir:
 
 ## Windows Terminal System help
 
-PS C:\Users\**\Desktop> system help
+![CTRL+F Komutu](https://github.com/systemcmd/Dotfiles/raw/main/images/CTRL+F.png)
+![CTRL+R Komutu](https://github.com/systemcmd/Dotfiles/raw/main/images/CTRL+R.jpg)
+![Nmap Menü](https://github.com/systemcmd/Dotfiles/raw/main/images/nmp.png)
+![System Help](https://github.com/systemcmd/Dotfiles/raw/main/images/system%20help.png)
 
-Mevcut Komutlar ve Fonksiyonlar:
----------------------------------
-Özel Tuş Atamaları:
-- Ctrl+d            : Çıkış yapar.
-- Ctrl+f            : Dosya araması için kullanır.
-- Ctrl+r            : Ters geçmiş araması için kullanır.
-
-Komutlar:
-- nmp               : Nmap komutları yardımcı menü.
-- hc                : Hashcat yardımcı menü.
-- msf               : Metasploit yardımcı menü.
-- dork              : GoogleDorking  menü.
-- ascii             : Cümle kodlama.
-- ip                : IP gösterir hem dış hem local.
-- pil               : Batarya bilgisini gösterir.
-- ram - gpu - cpu   : RAM, GPU ve CPU bilgileri gösterir.
-- bios              : BIOS bilgileri gösterir.
-- para              : Finansal hesaplamalar.
 
 ## Nasıl kurulur ? 
 
