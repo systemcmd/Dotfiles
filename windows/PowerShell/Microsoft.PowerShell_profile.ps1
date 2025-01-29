@@ -70,6 +70,7 @@ if ($PSScriptRoot) {
     . "$PSScriptRoot\nmphcmfs\Hashcat.ps1"
     . "$PSScriptRoot\nmphcmfs\Msfconsole.ps1"
     . "$PSScriptRoot\nmphcmfs\dork.ps1"
+    . "$PSScriptRoot\nmphcmfs\ncat.ps1"
     . "$PSScriptRoot\nmphcmfs\dockerhelp.ps1"
     . "$PSScriptRoot\\nmphcmfs\\blueteam.ps1"
     . "$PSScriptRoot\\nmphcmfs\\redteam.ps1"
@@ -108,6 +109,7 @@ Komutlar:
 - blueteam          : BlueTeam uygulamaları hakkında bilgi.
 - redteam           : RedTeam uygulamaları hakkında bilgi.
 - nmp               : Nmap komutları yardımcı menü.
+- ncatmenu          : Ncat komutları yardımcı menü.
 - hc                : Hashcat yardımcı menü.
 - msf               : Metasploit yardımcı menü.
 - dork              : GoogleDorking menü.
