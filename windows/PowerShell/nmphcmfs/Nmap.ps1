@@ -1,5 +1,6 @@
 function Show-AnimatedMenu.Nmap {
     $nmapCommands = @(
+    @{ Command="ls /usr/share/nmap/scripts/ | grep ftp*"; Description="Nmap’in betiklerini arar (FTP ile ilgili olanları listeler)."},
     @{ Command="nmap -sP 192.168.1.0/24"; Description="Ağdaki canlı cihazları tarar." },
     @{ Command="nmap -sS -p 22 192.168.1.1"; Description="Hedefteki 22 numaralı portu SYN taraması ile tarar." },
     @{ Command="nmap -A 192.168.1.1"; Description="Hedefteki OS ve servis versiyonlarını belirler." },
@@ -12,6 +13,9 @@ function Show-AnimatedMenu.Nmap {
     @{ Command="nmap -sC 192.168.1.1"; Description="Hedefteki standart script taramasını gerçekleştirir." },
     @{ Command="nmap -Pn 192.168.1.1"; Description="Ping taraması yapmadan hedefi tarar." },
     @{ Command="nmap -T4 -A -v 192.168.1.1"; Description="Hızlı ve ayrıntılı tarama yapar." },
+    @{ Command="nmap -v -sS -A -T4 target"; Description="TCP SYN taraması yapar, OS bilgisini ve servis versiyonlarını alır, traceroute ve betikleri çalıştırır." },
+    @{ Command="nmap -v -sS -p- -A -T4 target "; Description="TCP SYN taraması yapar, OS bilgisini ve servis versiyonlarını alır, traceroute ve betikleri çalıştırır ve tüm tcp portlarını tarar." },
+    @{ Command="nmap -v -sU -sS -p- -A -T4 target "; Description="TCP SYN taraması yapar, OS bilgisini ve servis versiyonlarını alır, traceroute ve betikleri çalıştırır ve tüm udp portlarını tarar." },
     @{ Command="nmap -sn 192.168.1.0/24"; Description="Sadece ping taraması yapar (port taraması yapmaz)." },
     @{ Command="nmap -oN output.txt 192.168.1.1"; Description="Taramayı normal metin formatında dosyaya kaydeder." },
     @{ Command="nmap -oX output.xml 192.168.1.1"; Description="Taramayı XML formatında dosyaya kaydeder." },
@@ -38,6 +42,7 @@ function Show-AnimatedMenu.Nmap {
     @{ Command="nmap -p 80,443 --script ssl-cert 192.168.1.1"; Description="SSL sertifikalarını kontrol eder." },
     @{ Command="nmap -p 80 --script http-enum 192.168.1.1"; Description="HTTP servisleri ve dizinlerini enumerate eder." },
     @{ Command="nmap --script smb-os-discovery 192.168.1.1"; Description="SMB üzerinden OS keşfi yapar." },
+    @{ Command="nmap -v -p 445 --script=smb-check-vulns --script-args=unsafe=1 192.168.1.X"; Description="SMB zafiyetlerini tarar. (unsafe=1 seçeneği Knockover saldırısına sebep olabilir)" },
     @{ Command="nmap -p 80 --script http-vuln-cve2017-5638 192.168.1.1"; Description="Apache Struts2 CVE-2017-5638 açığını kontrol eder." },
     @{ Command="nmap -p 21 --script ftp-anon 192.168.1.1"; Description="Anonim FTP girişini kontrol eder." },
     @{ Command="nmap -p 80 --script http-brute 192.168.1.1"; Description="HTTP brute force saldırısı yapar." },
