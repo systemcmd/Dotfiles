@@ -21,6 +21,7 @@ Bu **Dotfiles** betiği, sisteminizin verimli bir şekilde yönetilmesini sağla
 - 🌐 **Nmap** ile ağ taramaları.
 - 🐳 **Docker** bilgileri ve rehberlik.
 - 🔴 **Redteam** ve 🔵 **Blueteam** görevleri hakkında bilgi.
+- 🔹 **Yeni eklenen bir çok özellik...** 🔹
 
 ---
 
