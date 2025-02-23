@@ -32,6 +32,12 @@ Komutlar ve fonksiyonlar, aşağıdaki görsellerde detaylandırılmıştır:
 ### System Help
 ![System Help](https://github.com/systemcmd/Dotfiles/raw/main/images/systemhelp.png)
 
+### sistemarc
+![System Help](https://github.com/systemcmd/Dotfiles/raw/main/images/sistemarc.png)
+
+### adminhck
+![System Help](https://github.com/systemcmd/Dotfiles/raw/main/images/sahip.png)
+
 ### CTRL+F Kullanımı
 ![CTRL+F Komutu](https://github.com/systemcmd/Dotfiles/raw/main/images/CTRL+F.png)
 
@@ -115,4 +121,4 @@ Eğer `zsh` kullanıyorsanız, `bash`'a geçerek `ctrl+f` ve `ctrl+r` kullanım�
 
 ## 🏆 Destek ve Katkı
 
-Eğer projeyi beğendiyseniz, bir ⭐ bırakmayı unutmayın! 🧑‍💻
+Eğer projeyi beğendiyseniz, bir ⭐ bırakmayı unutmayın! [ ⭐ Geldikce Güncelleme Atılacak. ] 🧑‍💻
