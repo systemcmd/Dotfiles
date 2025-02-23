@@ -30,7 +30,7 @@ Bu **Dotfiles** betiği, sisteminizin verimli bir şekilde yönetilmesini sağla
 Komutlar ve fonksiyonlar, aşağıdaki görsellerde detaylandırılmıştır:
 
 ### System Help
-![System Help](https://github.com/systemcmd/Dotfiles/raw/main/images/system%20help.png)
+![System Help](https://github.com/systemcmd/Dotfiles/raw/main/images/systemhelp.png)
 
 ### CTRL+F Kullanımı
 ![CTRL+F Komutu](https://github.com/systemcmd/Dotfiles/raw/main/images/CTRL+F.png)
