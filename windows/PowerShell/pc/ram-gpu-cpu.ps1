@@ -168,3 +168,4 @@ function Disk {
         Write-Host "Bir hata oluştu: $_" -ForegroundColor Red
     }
 }
+

@@ -1,8 +1,24 @@
 function Show-AnimatedMenu.Nmap {
+    try {
+        [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+        $null = chcp 65001
+    } catch {
+        Write-Error "UTF-8 kodlaması ayarlanamadı: $_"
+    }
+    
     $nmapCommands = @(
     @{ Command="ls /usr/share/nmap/scripts/ | grep ftp*"; Description="Nmap’in betiklerini arar (FTP ile ilgili olanları listeler)."},
+    @{ Command="nmap -f 192.168.1.1"; Description="Paketleri parçalayarak güvenlik duvarını aşmayı dener." },
+    @{ Command="nmap --mtu 576 192.168.1.1"; Description="Paketlerin MTU boyutunu 576 olarak ayarlar." },
+    @{ Command="nmap -d 192.168.1.1"; Description="IP spoofing yaparak, paketleri 192.168.1.23 gibi sahte bir kaynak IP ile gönderir." }
     @{ Command="nmap -sP 192.168.1.0/24"; Description="Ağdaki canlı cihazları tarar." },
     @{ Command="nmap -sS -p 22 192.168.1.1"; Description="Hedefteki 22 numaralı portu SYN taraması ile tarar." },
+    @{ Command="nmap -T0 192.168.1.1"; Description="T0 zamanlama şablonu: En yavaş ve dikkatli tarama modu." },
+    @{ Command="nmap -T1 192.168.1.1"; Description="T1 zamanlama şablonu: Düşük hızda tarama." },
+    @{ Command="nmap -T2 192.168.1.1"; Description="T2 zamanlama şablonu: Normal tarama hızı." },
+    @{ Command="nmap -T3 192.168.1.1"; Description="T3 zamanlama şablonu: Orta hızda tarama." },
+    @{ Command="nmap -T4 192.168.1.1"; Description="T4 zamanlama şablonu: Hızlı tarama için önerilir." },
+    @{ Command="nmap -T5 192.168.1.1"; Description="T5 zamanlama şablonu: En hızlı ve agresif tarama modu (yüksek riskli)." }
     @{ Command="nmap -A 192.168.1.1"; Description="Hedefteki OS ve servis versiyonlarını belirler." },
     @{ Command="nmap -sV 192.168.1.1"; Description="Hedefteki servis versiyonlarını belirler." },
     @{ Command="nmap -O 192.168.1.1"; Description="Hedefteki işletim sistemini tespit eder." },
@@ -352,9 +368,24 @@ function Show-AnimatedMenu.Nmap {
         "$([char]27)[38;5;57m$($_.Command)$([char]27)[0m`t$([char]27)[38;5;244m⯈ $($_.Description)$([char]27)[0m"
     } | Out-String
 
+    $previewContent = @"
+P : Tuşuna bastığınızda taramadaki ilerleme durumunu (progress) gösterir.
+C : Tuşuna bastığınızda taramanın hangi aşamada olduğunu gösterir.
+
+Nmap (Network Mapper), ağ keşfi ve güvenlik denetimi için kullanılan açık kaynaklı ve güçlü bir tarama aracıdır. 
+Ağdaki cihazları, açık portları, çalışan servisleri, işletim sistemlerini ve güvenlik açıklarını belirlemek için kullanılır.
+"@
+
+    $previewFile = [System.IO.Path]::GetTempFileName()
+    $previewContent | Out-File -FilePath $previewFile -Encoding utf8
+
     $fzfOutputFile = [System.IO.Path]::GetTempFileName()
 
-    $fzfInput | fzf --height 70% --layout=reverse --border --ansi --color=fg:#FFD700,bg:#1C1C1C,hl:#5F00AF --color=fg+:#FFD700,bg+:#262626,hl+:#7FFF00 --color=info:#00FF00,prompt:#00FF00,pointer:#FF0000,marker:#FF69B4,spinner:#00FF00,header:#00FF00 > $fzfOutputFile
+    $fzfInput | fzf --height 70% --layout=reverse --border --ansi `
+        --preview-window="down:5:wrap" --preview "powershell -NoProfile -Command Get-Content -Path '$previewFile' -Encoding UTF8" `
+        --color=fg:#FFD700,bg:#1C1C1C,hl:#5F00AF `
+        --color=fg+:#FFD700,bg+:#262626,hl+:#7FFF00 `
+        --color=info:#00FF00,prompt:#00FF00,pointer:#FF0000,marker:#FF69B4,spinner:#00FF00,header:#00FF00 > $fzfOutputFile
 
     $selected = Get-Content -Path $fzfOutputFile
 
@@ -368,6 +399,7 @@ function Show-AnimatedMenu.Nmap {
     }
 
     Remove-Item -Path $fzfOutputFile
+    Remove-Item -Path $previewFile
 }
 
 Set-Alias nmp Show-AnimatedMenu.Nmap
