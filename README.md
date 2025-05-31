@@ -1,72 +1,56 @@
-# 🌟 Dotfiles SystemCmd
+# 📁 systemcmd Dotfiles
 
-![GitHub stars](https://img.shields.io/github/stars/systemcmd/Dotfiles?style=social)
-![GitHub forks](https://img.shields.io/github/forks/systemcmd/Dotfiles?style=social)
+![systemcmd banner](https://github.com/systemcmd/Dotfiles/raw/main/images/systemhelp.png)
+
+---
+
+## 🚀 Hızlı Başlangıç
+
+### 🔧 Windows Tek Komut Kurulumu
+
+PowerShell 7+ ile aşağıdaki komutu çalıştırarak tüm yapılandırmaları kurabilirsiniz:
 
 ```powershell
-$GitHubRepositoryAuthor = "Systemcmd"; `
-$GitHubRepositoryName = "Dotfiles"; `
+iwr https://raw.githubusercontent.com/systemcmd/Dotfiles/main/windows/PowerShell/setup.ps1 | iex
 ```
 
----
-
-## 🚀 Proje Özeti
-
-Bu **Dotfiles** betiği, sisteminizin verimli bir şekilde yönetilmesini sağlamak ve çeşitli güvenlik, bilgi toplama ve optimizasyon işlemleri gerçekleştirmek için tasarlanmıştır. Aşağıdaki işlevleri sunar:
-
-- ⚡ PowerShell profil yapılandırması
-- 🔍 BIOS, IP, ve Bluetooth cihaz bilgisi görüntüleme
-- 💹 Güncel döviz kurları görüntüleme
-- 📊 RAM, GPU, CPU kullanım analizi
-- 🌐 Google Dorking teknikleri
-- 🔑 Hashcat ile parola kırma
-- 🛡️ Metasploit Framework entegrasyonu
-- 🌐 Nmap ile ağ tarama
-- 🐳 Docker bilgileri ve örnekleri
-- 🔴 Redteam & 🔵 Blueteam rehberleri
-- 🔹 Daha birçok özellik...
+🟢 Kurulum sonrası tüm ayarlar otomatik etkinleşir.  
+🔁 Yeni bir PowerShell terminali açarak kullanmaya başlayabilirsiniz.
 
 ---
 
-## 💻 Windows Terminal System Help
+## 🎯 Özellikler
 
-Aşağıda sık kullanılan komut ve fonksiyonlara dair görseller yer almaktadır:
-
-![System Help](https://github.com/systemcmd/Dotfiles/raw/main/images/systemhelp.png)
-![sistemarc](https://github.com/systemcmd/Dotfiles/raw/main/images/sistemarc.png)
-![adminhck](https://github.com/systemcmd/Dotfiles/raw/main/images/sahip.png)
-![CTRL+F](https://github.com/systemcmd/Dotfiles/raw/main/images/CTRL+F.png)
-![CTRL+R](https://github.com/systemcmd/Dotfiles/raw/main/images/CTRL+R.jpg)
-![Nmap Menü](https://github.com/systemcmd/Dotfiles/raw/main/images/nmp.png)
+- 🖥️ PowerShell profili ile gelişmiş terminal
+- 📈 Sistem istatistikleri (CPU, RAM, GPU)
+- 🔍 IP, BIOS, ağ ve Bluetooth bilgisi
+- 💻 Docker, Nmap, Metasploit entegrasyonları
+- 🧠 Google Dork, Hashcat, Redteam/BlueTeam araçları
+- ⚙️ Terminal-Icons, PSReadLine, PSFzf modül desteği
+- 🧩 fzf ile etkileşimli servis ve log seçim sistemi
 
 ---
 
-## ⚙️ Otomatik Kurulum
+## 🖼️ Ekran Görüntüleri
 
-### 🐧 Linux/macOS:
+| Komut Yardımı | Sistem Bilgileri | Yetki Gösterimi |
+|---------------|------------------|------------------|
+| ![system](https://github.com/systemcmd/Dotfiles/raw/main/images/systemhelp.png) | ![arc](https://github.com/systemcmd/Dotfiles/raw/main/images/sistemarc.png) | ![admin](https://github.com/systemcmd/Dotfiles/raw/main/images/sahip.png) |
 
-Aşağıdaki tek satırlık komutla Dotfiles otomatik olarak indirilir, gerekli paketler kurulur ve sistem yapılandırılır:
+| FZF Kısayolları | Geri Arama | Nmap Menü |
+|------------------|------------|-------------|
+| ![CTRL+F](https://github.com/systemcmd/Dotfiles/raw/main/images/CTRL+F.png) | ![CTRL+R](https://github.com/systemcmd/Dotfiles/raw/main/images/CTRL+R.jpg) | ![Nmap](https://github.com/systemcmd/Dotfiles/raw/main/images/nmp.png) |
 
+---
+
+## ⚙️ Manuel Kurulum
+
+### Linux/macOS:
 ```bash
 bash -c "$(curl -fsSL https://raw.githubusercontent.com/systemcmd/Dotfiles/main/install.sh)"
 ```
 
-> Alternatif olarak manuel kurulum:
-```bash
-git clone https://github.com/systemcmd/Dotfiles.git ~/.dotfiles
-cd ~/.dotfiles
-chmod +x install.sh
-./install.sh
-```
-
----
-
-### 🪟 Windows:
-
-- `install.bat` dosyasına çift tıklayın  
-**veya**  
-- CMD'de aşağıdaki komutla çalıştırın:
-
+### Windows:
 ```cmd
 curl -LO https://raw.githubusercontent.com/systemcmd/Dotfiles/main/install.bat
 install.bat
@@ -74,50 +58,44 @@ install.bat
 
 ---
 
-## 📦 Kurulum İçeriği
+## 📦 Yapılandırma Dosyaları
 
-- `install.sh`: Linux/macOS için otomatik kurulum betiği
-- `install.bat`: Windows için otomatik kurulum betiği
-
-📌 `install.sh`: Dotfiles’ı indirir, gerekli paketleri kurar ve `bash/`, `zsh/`, `vim/`, `tmux/` klasörlerini `stow` ile ev dizinine bağlar.
-
-📌 `install.bat`: Dotfiles’ı indirir, `scoop` ile gerekli araçları kurar ve `.vimrc`, `.gitconfig` gibi yapılandırmaları sembolik bağlantı ile kullanıcı dizinine yerleştirir.
-
-🔁 Her iki script de terminali kullanıma hazır hale getirir. Kullanıcının tek yapması gereken bir kez çalıştırmaktır.
+- `setup.ps1` – PowerShell için otomatik kurulum
+- `install.sh` – Linux/macOS için terminal yapılandırması
+- `functions.ps1`, `aliases.ps1` – Özel komutlar ve kısayollar
+- `system.ps1` – Yardım ve komut tanıtım sistemi
 
 ---
 
-## 🛠️ Terminal Özelleştirme
+## 🎨 Tavsiye Edilen Terminal ve Font
 
-```powershell
-Install-Module -Name Terminal-Icons -Scope CurrentUser
-Install-Module -Name PSFzf -Scope CurrentUser
-```
-
-🖋 NerdFont için: [nerdfonts.com](https://www.nerdfonts.com/font-downloads)
+- 💻 [Windows Terminal](https://aka.ms/terminal)
+- 🖋 [NerdFonts - Hack, FiraCode](https://www.nerdfonts.com/font-downloads)
 
 ---
 
-## 🐧 Kali Linux İçin Ekstra
+## 🛟 Katkı & Geri Bildirim
 
-`.bashrc` dosyasını ana dizine kopyalayın veya içeriğini ekleyin:
+Geliştirmeye katkı sağlamak veya öneri sunmak için:
 
-```bash
-echo $SHELL
-```
-
-> `zsh` yerine `bash` kullanımı önerilir (`CTRL+F`, `CTRL+R` gibi kısayollar için)
+- ⭐ Bu repo'yu beğenerek destek ol
+- 📥 Pull Request gönderebilirsin
+- ❓ `Issues` kısmından geri bildirim bırakabilirsin
 
 ---
 
-## ⚠️ Önemli Notlar
+## 🧠 Notlar
 
-- 🛠️ Hatalar konusunda bire bir teknik destek verilmez.
-- 📤 Ancak geri bildirimleriniz ve yıldızlarınız projeye katkı sağlar. Teşekkürler!
+- Terminalinizin UTF-8 desteklediğinden emin olun
+- PowerShell 7.2+ önerilir
+- Bu repo, günlük kullanım ve pentest kolaylığı için optimize edilmiştir
 
 ---
 
-## 🏆 Destek ve Katkı
+## 📌 Lisans
 
-Projeyi beğendiyseniz, bir ⭐ bırakmayı unutmayın!  
-Yeni özellikler için isteklerinizi iletebilirsiniz. [ ⭐ Geldikçe Güncelleme Atılacak. ] 🧑‍💻
+MIT Lisansı – özgürce kullanın, geliştirin, paylaşın.
+
+---
+
+📬 Her şey hazır. Terminalde `system help` yaz ve keşfetmeye başla!
