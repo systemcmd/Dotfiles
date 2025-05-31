@@ -1,66 +1,40 @@
-# systemcmd Dotfiles One-Click Installer - Tam Entegre Kurulum
-
+# systemcmd Dotfiles Tek Tık Kurulum
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 Write-Host "`n📦 systemcmd kurulumu başlatılıyor..." -ForegroundColor Cyan
 
 # PowerShell 7 kontrolü
 if ($PSVersionTable.PSVersion.Major -lt 7) {
-    Write-Warning "❗ PowerShell 7+ gereklidir. Lütfen yükleyin: winget install Microsoft.Powershell"
+    Write-Warning "❗ PowerShell 7+ gereklidir. Lütfen 'winget install Microsoft.Powershell' ile yükleyin."
     return
 }
 
-# Profil yolu ve klasör kontrolü
-$targetProfile = $PROFILE
-$profileDir = Split-Path $targetProfile
-if (-not (Test-Path $profileDir)) {
-    New-Item -ItemType Directory -Path $profileDir -Force | Out-Null
+# Hedef klasör: PowerShell profil klasörü
+$psDir = "$HOME\Documents\PowerShell"
+if (-not (Test-Path $psDir)) {
+    Write-Host "📁 Profil klasörü oluşturuluyor: $psDir"
+    New-Item -ItemType Directory -Path $psDir -Force | Out-Null
 }
 
-# Profil içeriği oluşturuluyor
-$profileContent = @'
-# systemcmd PowerShell profili
-[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+# Tüm Dotfiles içeriğini bu dizine indirip kopyalayacağız
+$tempDir = "$env:TEMP\systemcmd-dotfiles"
+Remove-Item -Recurse -Force -Path $tempDir -ErrorAction SilentlyContinue
+git clone https://github.com/systemcmd/Dotfiles $tempDir
 
-function system {
-    param ([string]$command = "help")
-    switch ($command) {
-        "help" {
-            Write-Host "🧠 Komutlar:"
-            Write-Host "  system update   → Dotfiles güncelle (yakında)"
-            Write-Host "  system menu     → fzf menüsü"
-            Write-Host "  system harden   → Güvenlik ayarları (yakında)"
-        }
-        "menu" {
-            Show-SystemctlMenu
-        }
-        default {
-            Write-Warning "Tanımsız komut: $command"
-        }
-    }
+# PowerShell alt klasöründeki tüm dosyaları profil klasörüne kopyala
+$dotfilesSource = "$tempDir\windows\PowerShell"
+Copy-Item -Path "$dotfilesSource\*" -Destination $psDir -Recurse -Force
+
+# $PROFILE dosyasını ayarla (otomatik çalışsın)
+$profilePath = $PROFILE
+if (-not (Test-Path (Split-Path $profilePath))) {
+    New-Item -ItemType Directory -Path (Split-Path $profilePath) -Force | Out-Null
 }
+$sourceProfile = "$psDir\Microsoft.PowerShell_profile.ps1"
+Copy-Item -Path $sourceProfile -Destination $profilePath -Force
 
-function Show-SystemctlMenu {
-    $commands = @(
-        "systemctl list-units --type=service",
-        "systemctl status",
-        "journalctl -xe",
-        "systemctl restart network",
-        "systemctl enable docker",
-        "systemctl disable bluetooth"
-    )
-    $selection = $commands | fzf --prompt "Bir komut seç: "
-    if ($selection) {
-        Write-Host "`n⏱ Çalıştırılıyor: $selection" -ForegroundColor Cyan
-        Invoke-Expression $selection
-    }
-}
-'@
+Write-Host "✅ Profil ve fonksiyon dosyaları kopyalandı." -ForegroundColor Green
 
-# Dosyayı yaz
-Set-Content -Path $targetProfile -Value $profileContent -Encoding UTF8 -Force
-Write-Host "✅ Profil dosyası yazıldı: $targetProfile" -ForegroundColor Green
-
-# Modülleri kur
+# Modülleri yükle
 $modules = @("PSReadLine", "Terminal-Icons")
 foreach ($mod in $modules) {
     if (-not (Get-Module -ListAvailable -Name $mod)) {
@@ -71,7 +45,7 @@ foreach ($mod in $modules) {
     }
 }
 
-# fzf kontrolü
+# fzf yükle
 if (-not (Get-Command fzf.exe -ErrorAction SilentlyContinue)) {
     Write-Host "📦 fzf bulunamadı. Winget ile kuruluyor..."
     winget install fzf -e --silent
@@ -79,6 +53,7 @@ if (-not (Get-Command fzf.exe -ErrorAction SilentlyContinue)) {
     Write-Host "✅ fzf zaten kurulu." -ForegroundColor DarkGray
 }
 
-Write-Host "`n🎉 systemcmd ortamı hazır!" -ForegroundColor Cyan
-Write-Host "💡 'system help' yazarak komutları görebilirsin." -ForegroundColor Gray
-Write-Host "🔁 Yeni bir PowerShell terminali açarsan tüm değişiklikler aktif olur."
+# Kurulum tamamlandı
+Write-Host "`n🎉 systemcmd ortamı kuruldu ve aktif hale getirildi!" -ForegroundColor Cyan
+Write-Host "💡 Şimdi 'system help' yazarak komutları test edebilirsin." -ForegroundColor Gray
+Write-Host "🔁 Yeni bir PowerShell terminali açarsan her şey otomatik yüklenecek."
