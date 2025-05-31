@@ -27,37 +27,45 @@ Copy-Item -Path "$dotfilesSource\*" -Destination $psDir -Recurse -Force
 # $PROFILE dosyasını ayarla (ama kendini kopyalamaya çalışma)
 $profilePath = $PROFILE
 $sourceProfile = "$psDir\Microsoft.PowerShell_profile.ps1"
-
 if (-not (Test-Path (Split-Path $profilePath))) {
     New-Item -ItemType Directory -Path (Split-Path $profilePath) -Force | Out-Null
 }
-
 if ($sourceProfile -ne $profilePath) {
     Copy-Item -Path $sourceProfile -Destination $profilePath -Force
 }
 
-Write-Host "✅ Profil ve fonksiyon dosyaları kopyalandı." -ForegroundColor Green
+Write-Host "✅ Profil ve fonksiyon dosyaları başarıyla kopyalandı." -ForegroundColor Green
 
-# Gerekli PowerShell modüllerini yükle
-$modules = @("PSReadLine", "Terminal-Icons")
+# Gerekli modüller (PSReadLine, Terminal-Icons, PSFzf)
+$modules = @("PSReadLine", "Terminal-Icons", "PSFzf")
 foreach ($mod in $modules) {
     if (-not (Get-Module -ListAvailable -Name $mod)) {
-        Write-Host "📦 $mod yükleniyor..."
-        Install-Module $mod -Scope CurrentUser -Force -AllowClobber
+        Write-Host "📦 $mod modülü yükleniyor..."
+        try {
+            Install-Module $mod -Scope CurrentUser -Force -AllowClobber
+            Write-Host "✅ $mod başarıyla yüklendi." -ForegroundColor Green
+        } catch {
+            Write-Warning "⚠️ $mod yüklenemedi: $_"
+        }
     } else {
         Write-Host "✅ $mod zaten kurulu." -ForegroundColor DarkGray
     }
 }
 
-# fzf uygulamasını kontrol et ve yükle
+# fzf uygulaması yüklü mü?
 if (-not (Get-Command fzf.exe -ErrorAction SilentlyContinue)) {
     Write-Host "📦 fzf bulunamadı. Winget ile kuruluyor..."
-    winget install fzf -e --silent
+    try {
+        winget install fzf -e --silent
+        Write-Host "✅ fzf başarıyla yüklendi." -ForegroundColor Green
+    } catch {
+        Write-Warning "⚠️ fzf yüklenemedi. Manuel kurulum için: https://github.com/junegunn/fzf"
+    }
 } else {
-    Write-Host "✅ fzf zaten kurulu." -ForegroundColor DarkGray
+    Write-Host "✅ fzf zaten sistemde kurulu." -ForegroundColor DarkGray
 }
 
 # Kurulum tamam
-Write-Host "`n🎉 systemcmd ortamı kuruldu ve aktif hale getirildi!" -ForegroundColor Cyan
-Write-Host "💡 Şimdi 'system help' yazarak komutları test edebilirsin." -ForegroundColor Gray
-Write-Host "🔁 Yeni bir PowerShell terminali açarsan tüm özellikler otomatik yüklenecek."
+Write-Host "`n🎉 systemcmd ortamı başarıyla kuruldu ve aktif hale getirildi!" -ForegroundColor Cyan
+Write-Host "💡 'system help' yazarak komutları test edebilirsin." -ForegroundColor Gray
+Write-Host "🔁 Yeni bir PowerShell terminali açarsan tüm özellikler otomatik yüklenecek." -ForegroundColor Gray
