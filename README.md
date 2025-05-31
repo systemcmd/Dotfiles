@@ -112,6 +112,45 @@ Eğer `zsh` kullanıyorsanız, `bash`'a geçerek `ctrl+f` ve `ctrl+r` kullanım�
 
 ---
 
+## ⚙️ Otomatik Kurulum
+
+### 🐧 Linux/macOS:
+
+Aşağıdaki tek satırlık komutla Dotfiles otomatik olarak indirilir, gerekli paketler kurulur ve sistem yapılandırılır:
+
+```bash
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/systemcmd/Dotfiles/main/install.sh)"
+```
+
+> Alternatif olarak manuel kurulum:
+```bash
+git clone https://github.com/systemcmd/Dotfiles.git ~/.dotfiles
+cd ~/.dotfiles
+chmod +x install.sh
+./install.sh
+```
+
+---
+
+### 🪟 Windows:
+
+- `install.bat` dosyasına çift tıklayın  
+**veya**  
+- CMD'de aşağıdaki komutla çalıştırın:
+
+```cmd
+curl -LO https://raw.githubusercontent.com/systemcmd/Dotfiles/main/install.bat
+install.bat
+```
+
+---
+
+📌 `install.sh`, Dotfiles'ı indirir, gerekli paketleri yükler ve `bash/`, `zsh/`, `vim/`, `tmux/` klasörlerini `stow` ile bağlar.
+
+📌 `install.bat`, GitHub'dan Dotfiles'ı indirir, `scoop` ile araçları kurar ve `.vimrc`, `.gitconfig` gibi dosyaları kullanıcı dizinine bağlar.
+
+
+
 ## ⚠️ Önemli Notlar
 
 - 🛠️ Hatalarla ilgili doğrudan destek sağlamıyorum.
