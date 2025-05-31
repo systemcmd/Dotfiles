@@ -2,10 +2,7 @@
 SETLOCAL ENABLEDELAYEDEXPANSION
 
 echo 📥 Dotfiles indiriliyor...
-git clone https://github.com/systemcmd/Dotfiles.git %USERPROFILE%\.dotfiles 2>nul || (
-    echo ⚠️ Zaten var. Güncelleniyor...
-    cd %USERPROFILE%\.dotfiles && git pull
-)
+git clone https://github.com/systemcmd/Dotfiles.git %USERPROFILE%\.dotfiles
 cd %USERPROFILE%\.dotfiles
 
 echo 🔧 Scoop kontrol ediliyor...

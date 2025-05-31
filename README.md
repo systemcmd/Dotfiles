@@ -1,5 +1,8 @@
 # 🌟 Dotfiles SystemCmd
 
+![GitHub stars](https://img.shields.io/github/stars/systemcmd/Dotfiles?style=social)
+![GitHub forks](https://img.shields.io/github/forks/systemcmd/Dotfiles?style=social)
+
 ```powershell
 $GitHubRepositoryAuthor = "Systemcmd"; `
 $GitHubRepositoryName = "Dotfiles"; `
@@ -11,104 +14,30 @@ $GitHubRepositoryName = "Dotfiles"; `
 
 Bu **Dotfiles** betiği, sisteminizin verimli bir şekilde yönetilmesini sağlamak ve çeşitli güvenlik, bilgi toplama ve optimizasyon işlemleri gerçekleştirmek için tasarlanmıştır. Aşağıdaki işlevleri sunar:
 
-- ⚡ **PowerShell** profil yapılandırması.
-- 🔍 **BIOS**, **IP**, ve Bluetooth cihaz bilgisi görüntüleme.
-- 💹 Güncel döviz kurlarını görüntüleme.
-- 📊 **RAM**, **GPU**, ve **CPU** kullanım durumlarını analiz etme.
-- 🌐 **Google Dorking** teknikleriyle hızlı aramalar.
-- 🔑 **Hashcat** ile parola kırma.
-- 🛡️ **Metasploit Framework** desteği.
-- 🌐 **Nmap** ile ağ taramaları.
-- 🐳 **Docker** bilgileri ve rehberlik.
-- 🔴 **Redteam** ve 🔵 **Blueteam** görevleri hakkında bilgi.
-- 🔹 **Yeni eklenen bir çok özellik...** 🔹
+- ⚡ PowerShell profil yapılandırması
+- 🔍 BIOS, IP, ve Bluetooth cihaz bilgisi görüntüleme
+- 💹 Güncel döviz kurları görüntüleme
+- 📊 RAM, GPU, CPU kullanım analizi
+- 🌐 Google Dorking teknikleri
+- 🔑 Hashcat ile parola kırma
+- 🛡️ Metasploit Framework entegrasyonu
+- 🌐 Nmap ile ağ tarama
+- 🐳 Docker bilgileri ve örnekleri
+- 🔴 Redteam & 🔵 Blueteam rehberleri
+- 🔹 Daha birçok özellik...
 
 ---
 
 ## 💻 Windows Terminal System Help
 
-Komutlar ve fonksiyonlar, aşağıdaki görsellerde detaylandırılmıştır:
+Aşağıda sık kullanılan komut ve fonksiyonlara dair görseller yer almaktadır:
 
-### System Help
 ![System Help](https://github.com/systemcmd/Dotfiles/raw/main/images/systemhelp.png)
-
-### sistemarc
-![System Help](https://github.com/systemcmd/Dotfiles/raw/main/images/sistemarc.png)
-
-### adminhck
-![System Help](https://github.com/systemcmd/Dotfiles/raw/main/images/sahip.png)
-
-### CTRL+F Kullanımı
-![CTRL+F Komutu](https://github.com/systemcmd/Dotfiles/raw/main/images/CTRL+F.png)
-
-### CTRL+R Kullanımı
-![CTRL+R Komutu](https://github.com/systemcmd/Dotfiles/raw/main/images/CTRL+R.jpg)
-
-### Nmap Menü
+![sistemarc](https://github.com/systemcmd/Dotfiles/raw/main/images/sistemarc.png)
+![adminhck](https://github.com/systemcmd/Dotfiles/raw/main/images/sahip.png)
+![CTRL+F](https://github.com/systemcmd/Dotfiles/raw/main/images/CTRL+F.png)
+![CTRL+R](https://github.com/systemcmd/Dotfiles/raw/main/images/CTRL+R.jpg)
 ![Nmap Menü](https://github.com/systemcmd/Dotfiles/raw/main/images/nmp.png)
-
----
-
-## 🔧 Kurulum Rehberi
-
-1. **Dotfiles İndirme**  
-   Dotfiles içerisindeki `powershell` klasörünü doğrudan `Belgeler` dizinine kopyalayın.
-
-2. **Alternatif Yöntem**  
-   `Microsoft.PowerShell_profile` dosyasındaki kodları `$profile` içine yapıştırın. Ardından, `powershell` klasörünü oluşturulan `Belgeler` dizinine taşıyın.
-
-3. **PowerShell Yükleme**  
-   Microsoft Store'dan **PowerShell Preview** veya **PowerShell** yükleyin.
-
----
-
-### 🛠️ Scoop Kurulumu
-
-Aşağıdaki adımları izleyerek gerekli araçları yükleyin:
-
-```powershell
-Set-ExecutionPolicy RemoteSigned -Scope CurrentUser  # PowerShell Policy Ayarları
-irm get.scoop.sh | iex                               # Scoop Yükleme
-scoop --version                                      # Scoop Test
-scoop install fzf                                    # fzf Modülü
-scoop install bat                                    # bat Modülü
-```
-
----
-
-### 🎨 Terminal Özelleştirme
-
-1. **Icons Modülü**  
-   ```powershell
-   Install-Module -Name Terminal-Icons -Scope CurrentUser
-   ```
-
-2. **Fzf Modülü**  
-   ```powershell
-   Install-Module -Name PSFzf -Scope CurrentUser
-   ```
-
-3. **NerdFont Yükleme**  
-   [NerdFont Resmi Sitesi](https://www.nerdfonts.com/font-downloads) üzerinden uygun fontu indirin.
-
----
-
-### 🛠️ Terminal Settings (İsteğe Bağlı)
-
-Terminalin görünümünü daha profesyonel yapmak için aşağıdaki işlemi gerçekleştirin:
-
-1. `C:\Users\kod\AppData\Local\Packages\Microsoft.WindowsTerminal_8wekyb3d8bbwe\LocalState\settings.json` dosyasını açın.
-2. Örnek ayarları bu dosyaya ekleyin ve gerekli yolları düzenleyin.
-
----
-
-### 🐧 Kali Linux İçin Ekstra
-
-`.bashrc` dosyasını ana dizininize kopyalayın veya içeriğini ekleyin:
-```bash
-echo $SHELL  # Kontrol etmek için
-```
-Eğer `zsh` kullanıyorsanız, `bash`'a geçerek `ctrl+f` ve `ctrl+r` kullanımını aktif hale getirebilirsiniz.
 
 ---
 
@@ -145,17 +74,50 @@ install.bat
 
 ---
 
-📌 `install.sh`, Dotfiles'ı indirir, gerekli paketleri yükler ve `bash/`, `zsh/`, `vim/`, `tmux/` klasörlerini `stow` ile bağlar.
+## 📦 Kurulum İçeriği
 
-📌 `install.bat`, GitHub'dan Dotfiles'ı indirir, `scoop` ile araçları kurar ve `.vimrc`, `.gitconfig` gibi dosyaları kullanıcı dizinine bağlar.
+- `install.sh`: Linux/macOS için otomatik kurulum betiği
+- `install.bat`: Windows için otomatik kurulum betiği
+
+📌 `install.sh`: Dotfiles’ı indirir, gerekli paketleri kurar ve `bash/`, `zsh/`, `vim/`, `tmux/` klasörlerini `stow` ile ev dizinine bağlar.
+
+📌 `install.bat`: Dotfiles’ı indirir, `scoop` ile gerekli araçları kurar ve `.vimrc`, `.gitconfig` gibi yapılandırmaları sembolik bağlantı ile kullanıcı dizinine yerleştirir.
+
+🔁 Her iki script de terminali kullanıma hazır hale getirir. Kullanıcının tek yapması gereken bir kez çalıştırmaktır.
+
+---
+
+## 🛠️ Terminal Özelleştirme
+
+```powershell
+Install-Module -Name Terminal-Icons -Scope CurrentUser
+Install-Module -Name PSFzf -Scope CurrentUser
+```
+
+🖋 NerdFont için: [nerdfonts.com](https://www.nerdfonts.com/font-downloads)
+
+---
+
+## 🐧 Kali Linux İçin Ekstra
+
+`.bashrc` dosyasını ana dizine kopyalayın veya içeriğini ekleyin:
+
+```bash
+echo $SHELL
+```
+
+> `zsh` yerine `bash` kullanımı önerilir (`CTRL+F`, `CTRL+R` gibi kısayollar için)
+
+---
 
 ## ⚠️ Önemli Notlar
 
-- 🛠️ Hatalarla ilgili doğrudan destek sağlamıyorum.
-- Paylaşımımla ilgilendiğiniz için teşekkür ederim! 😊
+- 🛠️ Hatalar konusunda bire bir teknik destek verilmez.
+- 📤 Ancak geri bildirimleriniz ve yıldızlarınız projeye katkı sağlar. Teşekkürler!
 
 ---
 
 ## 🏆 Destek ve Katkı
 
-Eğer projeyi beğendiyseniz, bir ⭐ bırakmayı unutmayın! [ ⭐ Geldikce Güncelleme Atılacak. ] 🧑‍💻
+Projeyi beğendiyseniz, bir ⭐ bırakmayı unutmayın!  
+Yeni özellikler için isteklerinizi iletebilirsiniz. [ ⭐ Geldikçe Güncelleme Atılacak. ] 🧑‍💻

@@ -1,11 +1,9 @@
 #!/bin/bash
+
 set -e
 
 echo "📥 Dotfiles indiriliyor..."
-git clone https://github.com/systemcmd/Dotfiles.git "$HOME/.dotfiles" || {
-  echo "⚠️ Zaten var. Güncelleniyor..."
-  cd "$HOME/.dotfiles" && git pull
-}
+git clone https://github.com/systemcmd/Dotfiles.git "$HOME/.dotfiles"
 
 cd "$HOME/.dotfiles"
 
