@@ -15,26 +15,30 @@ if (-not (Test-Path $psDir)) {
     New-Item -ItemType Directory -Path $psDir -Force | Out-Null
 }
 
-# Tüm Dotfiles içeriğini bu dizine indirip kopyalayacağız
+# Geçici klasöre Dotfiles indir
 $tempDir = "$env:TEMP\systemcmd-dotfiles"
 Remove-Item -Recurse -Force -Path $tempDir -ErrorAction SilentlyContinue
 git clone https://github.com/systemcmd/Dotfiles $tempDir
 
-# PowerShell alt klasöründeki tüm dosyaları profil klasörüne kopyala
+# Dotfiles içeriğini PowerShell klasörüne kopyala
 $dotfilesSource = "$tempDir\windows\PowerShell"
 Copy-Item -Path "$dotfilesSource\*" -Destination $psDir -Recurse -Force
 
-# $PROFILE dosyasını ayarla (otomatik çalışsın)
+# $PROFILE dosyasını ayarla (ama kendini kopyalamaya çalışma)
 $profilePath = $PROFILE
+$sourceProfile = "$psDir\Microsoft.PowerShell_profile.ps1"
+
 if (-not (Test-Path (Split-Path $profilePath))) {
     New-Item -ItemType Directory -Path (Split-Path $profilePath) -Force | Out-Null
 }
-$sourceProfile = "$psDir\Microsoft.PowerShell_profile.ps1"
-Copy-Item -Path $sourceProfile -Destination $profilePath -Force
+
+if ($sourceProfile -ne $profilePath) {
+    Copy-Item -Path $sourceProfile -Destination $profilePath -Force
+}
 
 Write-Host "✅ Profil ve fonksiyon dosyaları kopyalandı." -ForegroundColor Green
 
-# Modülleri yükle
+# Gerekli PowerShell modüllerini yükle
 $modules = @("PSReadLine", "Terminal-Icons")
 foreach ($mod in $modules) {
     if (-not (Get-Module -ListAvailable -Name $mod)) {
@@ -45,7 +49,7 @@ foreach ($mod in $modules) {
     }
 }
 
-# fzf yükle
+# fzf uygulamasını kontrol et ve yükle
 if (-not (Get-Command fzf.exe -ErrorAction SilentlyContinue)) {
     Write-Host "📦 fzf bulunamadı. Winget ile kuruluyor..."
     winget install fzf -e --silent
@@ -53,7 +57,7 @@ if (-not (Get-Command fzf.exe -ErrorAction SilentlyContinue)) {
     Write-Host "✅ fzf zaten kurulu." -ForegroundColor DarkGray
 }
 
-# Kurulum tamamlandı
+# Kurulum tamam
 Write-Host "`n🎉 systemcmd ortamı kuruldu ve aktif hale getirildi!" -ForegroundColor Cyan
 Write-Host "💡 Şimdi 'system help' yazarak komutları test edebilirsin." -ForegroundColor Gray
-Write-Host "🔁 Yeni bir PowerShell terminali açarsan her şey otomatik yüklenecek."
+Write-Host "🔁 Yeni bir PowerShell terminali açarsan tüm özellikler otomatik yüklenecek."
