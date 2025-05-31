@@ -1,5 +1,7 @@
 # systemcmd Dotfiles Tek Tık Kurulum
-[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+[Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($true)
+$OutputEncoding = [Console]::OutputEncoding
+
 Write-Host "`n📦 systemcmd kurulumu başlatılıyor..." -ForegroundColor Cyan
 
 # PowerShell 7 kontrolü
@@ -36,8 +38,8 @@ if ($sourceProfile -ne $profilePath) {
 
 Write-Host "✅ Profil ve fonksiyon dosyaları başarıyla kopyalandı." -ForegroundColor Green
 
-# Gerekli modüller (PSReadLine, Terminal-Icons, PSFzf)
-$modules = @("PSReadLine", "Terminal-Icons", "PSFzf")
+# PSReadLine ve Terminal-Icons modülleri
+$modules = @("PSReadLine", "Terminal-Icons")
 foreach ($mod in $modules) {
     if (-not (Get-Module -ListAvailable -Name $mod)) {
         Write-Host "📦 $mod modülü yükleniyor..."
@@ -50,6 +52,18 @@ foreach ($mod in $modules) {
     } else {
         Write-Host "✅ $mod zaten kurulu." -ForegroundColor DarkGray
     }
+}
+
+# PSFzf modülünü manuel indir ve kur
+$psfzfDir = "$HOME\Documents\PowerShell\Modules\PSFzf"
+if (-not (Test-Path $psfzfDir)) {
+    Write-Host "📦 PSFzf modülü manuel kuruluyor..."
+    Invoke-WebRequest -Uri "https://github.com/kelleyma49/PSFzf/archive/refs/heads/main.zip" -OutFile "$env:TEMP\PSFzf.zip"
+    Expand-Archive "$env:TEMP\PSFzf.zip" -DestinationPath "$env:TEMP\PSFzf" -Force
+    Move-Item "$env:TEMP\PSFzf\PSFzf-main" $psfzfDir -Force
+    Write-Host "✅ PSFzf başarıyla indirildi ve kuruldu." -ForegroundColor Green
+} else {
+    Write-Host "✅ PSFzf zaten kurulu." -ForegroundColor DarkGray
 }
 
 # fzf uygulaması yüklü mü?
