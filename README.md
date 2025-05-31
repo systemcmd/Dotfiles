@@ -149,8 +149,6 @@ install.bat
 
 📌 `install.bat`, GitHub'dan Dotfiles'ı indirir, `scoop` ile araçları kurar ve `.vimrc`, `.gitconfig` gibi dosyaları kullanıcı dizinine bağlar.
 
-
-
 ## ⚠️ Önemli Notlar
 
 - 🛠️ Hatalarla ilgili doğrudan destek sağlamıyorum.

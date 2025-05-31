@@ -2,7 +2,10 @@
 SETLOCAL ENABLEDELAYEDEXPANSION
 
 echo 📥 Dotfiles indiriliyor...
-git clone https://github.com/systemcmd/Dotfiles.git %USERPROFILE%\.dotfiles
+git clone https://github.com/systemcmd/Dotfiles.git %USERPROFILE%\.dotfiles 2>nul || (
+    echo ⚠️ Zaten var. Güncelleniyor...
+    cd %USERPROFILE%\.dotfiles && git pull
+)
 cd %USERPROFILE%\.dotfiles
 
 echo 🔧 Scoop kontrol ediliyor...
@@ -15,8 +18,12 @@ echo 🧰 Araçlar yükleniyor...
 scoop install git neovim fzf delta
 
 echo 🔗 Dotfiles bağlanıyor...
-mklink %USERPROFILE%\.vimrc %USERPROFILE%\.dotfiles\\windows\\_vimrc
-mklink %USERPROFILE%\.gitconfig %USERPROFILE%\.dotfiles\\windows\\_gitconfig
+if exist windows\_vimrc (
+    mklink %USERPROFILE%\.vimrc %USERPROFILE%\.dotfiles\windows\_vimrc
+)
+if exist windows\_gitconfig (
+    mklink %USERPROFILE%\.gitconfig %USERPROFILE%\.dotfiles\windows\_gitconfig
+)
 
 echo ✅ Kurulum tamamlandı! Yeni terminal açabilirsiniz.
 pause
