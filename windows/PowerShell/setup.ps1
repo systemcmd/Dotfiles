@@ -38,7 +38,7 @@ if ($sourceProfile -ne $profilePath) {
 
 Write-Host "✅ Profil ve fonksiyon dosyaları başarıyla kopyalandı." -ForegroundColor Green
 
-# PSReadLine ve Terminal-Icons modülleri
+# Gerekli modüller (PSReadLine, Terminal-Icons)
 $modules = @("PSReadLine", "Terminal-Icons")
 foreach ($mod in $modules) {
     if (-not (Get-Module -ListAvailable -Name $mod)) {
@@ -54,13 +54,13 @@ foreach ($mod in $modules) {
     }
 }
 
-# PSFzf modülünü manuel indir ve kur
+# PSFzf modülünü manuel indir ve kur (404 düzeltildi)
 $psfzfDir = "$HOME\Documents\PowerShell\Modules\PSFzf"
 if (-not (Test-Path $psfzfDir)) {
     Write-Host "📦 PSFzf modülü manuel kuruluyor..."
-    Invoke-WebRequest -Uri "https://github.com/kelleyma49/PSFzf/archive/refs/heads/main.zip" -OutFile "$env:TEMP\PSFzf.zip"
+    Invoke-WebRequest -Uri "https://github.com/kelleyma49/PSFzf/archive/refs/heads/master.zip" -OutFile "$env:TEMP\PSFzf.zip"
     Expand-Archive "$env:TEMP\PSFzf.zip" -DestinationPath "$env:TEMP\PSFzf" -Force
-    Move-Item "$env:TEMP\PSFzf\PSFzf-main" $psfzfDir -Force
+    Move-Item "$env:TEMP\PSFzf\PSFzf-master" $psfzfDir -Force
     Write-Host "✅ PSFzf başarıyla indirildi ve kuruldu." -ForegroundColor Green
 } else {
     Write-Host "✅ PSFzf zaten kurulu." -ForegroundColor DarkGray
