@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Install systemcmd
+Comment=systemcmd bash profilini tek tikla kurar
+Terminal=true
+Categories=System;Utility;
+Icon=utilities-terminal
+Exec=sh -c 'desktop_file="$1"; script_dir="$(CDPATH="" cd -- "$(dirname -- "$desktop_file")" && pwd)"; bash "$script_dir/install.sh"; printf "\nKurulum bitti. Pencereyi kapatmak icin Enter...\n"; read -r _' sh %k

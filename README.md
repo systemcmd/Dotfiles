@@ -1,101 +1,66 @@
-# 📁 systemcmd Dotfiles
+# systemcmd Dotfiles
 
 ![systemcmd banner](https://github.com/systemcmd/Dotfiles/raw/main/images/systemhelp.png)
 
----
+Bu repo iki ayri kurulum akisi sunar:
 
-## 🚀 Hızlı Başlangıç
+- Windows 11 icin PowerShell 7 profili ve araclari
+- Linux icin Bash profili ve fzf tabanli hizli komutlar
 
-### 🔧 Windows Tek Komut Kurulumu
+## Tek Tik Kurulum
 
-PowerShell 7+ ile aşağıdaki komutu çalıştırarak tüm yapılandırmaları kurabilirsiniz:
+### Windows 11
+
+Repo'yu indiren kullanici sadece `install.bat` dosyasina cift tiklar.
+
+Alternatif olarak PowerShell ile:
 
 ```powershell
-iwr https://raw.githubusercontent.com/systemcmd/Dotfiles/main/windows/PowerShell/setup.ps1 | iex
+iwr https://raw.githubusercontent.com/systemcmd/Dotfiles/main/windows/install.ps1 | iex
 ```
 
-🟢 Kurulum sonrası tüm ayarlar otomatik etkinleşir.  
-🔁 Yeni bir PowerShell terminali açarak kullanmaya başlayabilirsiniz.
+Kurulum:
 
----
+- PowerShell 7, `fzf`, `bat` ve `Neovim` icin `winget` denemesi yapar
+- `PSReadLine`, `Terminal-Icons` ve `PSFzf` modullerini kurar
+- Dosyalari `Documents\PowerShell\systemcmd` altina kopyalar
+- Var olan profili ezmek yerine bootstrap satiri ekler
 
-## 🎯 Özellikler
+### Linux
 
-- 🖥️ PowerShell profili ile gelişmiş terminal
-- 📈 Sistem istatistikleri (CPU, RAM, GPU)
-- 🔍 IP, BIOS, ağ ve Bluetooth bilgisi
-- 💻 Docker, Nmap, Metasploit entegrasyonları
-- 🧠 Google Dork, Hashcat, Redteam/BlueTeam araçları
-- ⚙️ Terminal-Icons, PSReadLine, PSFzf modül desteği
-- 🧩 fzf ile etkileşimli servis ve log seçim sistemi
+Repo'yu indiren kullanici masaustu ortaminda `install-linux.desktop` dosyasina cift tiklayabilir.
 
----
+Terminal tercih edenler icin:
 
-## 🖼️ Ekran Görüntüleri
-
-| Komut Yardımı | Sistem Bilgileri | Yetki Gösterimi |
-|---------------|------------------|------------------|
-| ![system](https://github.com/systemcmd/Dotfiles/raw/main/images/systemhelp.png) | ![arc](https://github.com/systemcmd/Dotfiles/raw/main/images/sistemarc.png) | ![admin](https://github.com/systemcmd/Dotfiles/raw/main/images/sahip.png) |
-
-| FZF Kısayolları | Geri Arama | Nmap Menü |
-|------------------|------------|-------------|
-| ![CTRL+F](https://github.com/systemcmd/Dotfiles/raw/main/images/CTRL+F.png) | ![CTRL+R](https://github.com/systemcmd/Dotfiles/raw/main/images/CTRL+R.jpg) | ![Nmap](https://github.com/systemcmd/Dotfiles/raw/main/images/nmp.png) |
-
----
-
-## ⚙️ Manuel Kurulum
-
-### Linux/macOS:
 ```bash
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/systemcmd/Dotfiles/main/install.sh)"
+bash install.sh
 ```
 
-### Windows:
-```cmd
-curl -LO https://raw.githubusercontent.com/systemcmd/Dotfiles/main/install.bat
-install.bat
-```
+Kurulum:
 
----
+- `apt`, `dnf`, `pacman`, `zypper` veya `apk` ile gerekli paketleri kurmayi dener
+- `~/.config/systemcmd/systemcmd.bashrc` dosyasini yerlestirir
+- `~/.bashrc` icine tek satirlik bootstrap ekler
 
-## 📦 Yapılandırma Dosyaları
+## Neler Duzenlendi
 
-- `setup.ps1` – PowerShell için otomatik kurulum
-- `install.sh` – Linux/macOS için terminal yapılandırması
-- `functions.ps1`, `aliases.ps1` – Özel komutlar ve kısayollar
-- `system.ps1` – Yardım ve komut tanıtım sistemi
+- Windows profili artik kosulsuz hata uretmiyor
+- Eksik moduller ve komutlar sessizce pas geciliyor
+- `Show-Ports` fonksiyonu eklendi
+- Kurulum scriptleri artik mevcut dosya agaciyla uyumlu
+- Linux installer eski olmayan klasorleri hedeflemiyor
 
----
+## Dizinler
 
-## 🎨 Tavsiye Edilen Terminal ve Font
+- `windows/install.ps1`: Windows installer
+- `windows/PowerShell/`: Windows profil ve komut dosyalari
+- `linux/systemcmd.bashrc`: Linux bash profil parcasi
+- `install.bat`: Windows icin tek tik giris noktasi
+- `install.sh`: Linux icin terminal giris noktasi
+- `install-linux.desktop`: Linux icin GUI giris noktasi
 
-- 💻 [Windows Terminal](https://aka.ms/terminal)
-- 🖋 [NerdFonts - Hack, FiraCode](https://www.nerdfonts.com/font-downloads)
+## Notlar
 
----
-
-## 🛟 Katkı & Geri Bildirim
-
-Geliştirmeye katkı sağlamak veya öneri sunmak için:
-
-- ⭐ Bu repo'yu beğenerek destek ol
-- 📥 Pull Request gönderebilirsin
-- ❓ `Issues` kısmından geri bildirim bırakabilirsin
-
----
-
-## 🧠 Notlar
-
-- Terminalinizin UTF-8 desteklediğinden emin olun
-- PowerShell 7.2+ önerilir
-- Bu repo, günlük kullanım ve pentest kolaylığı için optimize edilmiştir
-
----
-
-## 📌 Lisans
-
-MIT Lisansı – özgürce kullanın, geliştirin, paylaşın.
-
----
-
-📬 Her şey hazır. Terminalde `system help` yaz ve keşfetmeye başla!
+- Windows Terminal ayarlari otomatik olarak ezilmez; ornek dosya kurulum klasorune kopyalanir
+- Linux masaustu ortamina gore `.desktop` dosyasina ilk acilista "Allow Launching" vermeniz gerekebilir
+- Kurulumdan sonra yeni bir terminal acmaniz yeterli

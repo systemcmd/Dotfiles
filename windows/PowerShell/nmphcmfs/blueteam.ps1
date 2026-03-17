@@ -81,4 +81,4 @@ function Invoke-BlueTeam {
 }
 
 # Alias Oluşturma
-New-Alias -Name 'blueteam' -Value 'Invoke-BlueTeam'
+Set-Alias -Name 'blueteam' -Value 'Invoke-BlueTeam' -Option AllScope -Scope Global -Force

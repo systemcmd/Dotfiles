@@ -1,0 +1,463 @@
+# shellcheck shell=bash
+
+case $- in
+  *i*) ;;
+  *) return ;;
+esac
+
+export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS:---layout=reverse --border}"
+export SYSTEMCMD_HOME="${HOME}/.config/systemcmd"
+export SYSTEMCMD_HISTORY_FAVORITES_PATH="${SYSTEMCMD_HISTORY_FAVORITES_PATH:-${HOME}/.systemcmd-history-favorites}"
+export SYSTEMCMD_HISTORY_PREVIEW_PATH="${SYSTEMCMD_HOME}/history-preview.txt"
+export SYSTEMCMD_FZF_COLOR='fg:#d6d3d1,fg+:#fdba74,bg:-1,bg+:-1,gutter:-1,prompt:#a8a29e,pointer:#f97316,marker:#f59e0b,spinner:#a8a29e,hl:#f59e0b,hl+:#fb923c,info:#78716c,border:#6b4f2c,preview-border:#6b4f2c'
+export SYSTEMCMD_FZF_SKIP_DIRS='.git,node_modules,dist,build,target,.venv,venv,__pycache__,.next,.nuxt,.cache,bin,obj,vendor,coverage,out,release,debug,.pytest_cache,.mypy_cache,.tox'
+
+mkdir -p "${SYSTEMCMD_HOME}"
+
+if command -v dircolors >/dev/null 2>&1; then
+  eval "$(dircolors -b)"
+  alias ls='ls --color=auto'
+fi
+
+alias ll='ls -alF'
+
+if command -v batcat >/dev/null 2>&1; then
+  export SYSTEMCMD_BAT='batcat'
+  export SYSTEMCMD_PREVIEW='batcat --style=numbers --color=always --paging=never --line-range :300 {}'
+elif command -v bat >/dev/null 2>&1; then
+  export SYSTEMCMD_BAT='bat'
+  export SYSTEMCMD_PREVIEW='bat --style=numbers --color=always --paging=never --line-range :300 {}'
+else
+  export SYSTEMCMD_BAT='cat'
+  export SYSTEMCMD_PREVIEW='cat {}'
+fi
+
+system_ram_info() {
+  free -m 2>/dev/null | awk '/^Mem:/ {printf "Used RAM: %.2f GB | Free RAM: %.2f GB", $3 / 1024, $4 / 1024}'
+}
+
+system_cpu_info() {
+  LC_ALL=C top -bn1 2>/dev/null | awk -F'[, ]+' '/Cpu\(s\)/ {printf "CPU Usage: %.1f%%", 100 - $8; exit}'
+}
+
+system_local_ip() {
+  hostname -I 2>/dev/null | awk '{print "Local IP: " $1}'
+}
+
+systemcmd_has_fzf_walker() {
+  if [[ -n "${SYSTEMCMD_FZF_HAS_WALKER:-}" ]]; then
+    [[ "${SYSTEMCMD_FZF_HAS_WALKER}" == '1' ]]
+    return
+  fi
+
+  if command -v fzf >/dev/null 2>&1 && fzf --help 2>/dev/null | grep -q -- '--walker'; then
+    SYSTEMCMD_FZF_HAS_WALKER='1'
+  else
+    SYSTEMCMD_FZF_HAS_WALKER='0'
+  fi
+
+  [[ "${SYSTEMCMD_FZF_HAS_WALKER}" == '1' ]]
+}
+
+systemcmd_current_token_bounds() {
+  local line="${READLINE_LINE}"
+  local point="${READLINE_POINT:-0}"
+  local length=${#line}
+  local left right token
+
+  if (( length == 0 )); then
+    printf '0\t0\t\n'
+    return
+  fi
+
+  if (( point > length )); then
+    point=${length}
+  fi
+
+  left=${point}
+  while (( left > 0 )); do
+    if [[ "${line:left-1:1}" == ' ' || "${line:left-1:1}" == $'\t' ]]; then
+      break
+    fi
+    ((left--))
+  done
+
+  right=${point}
+  while (( right < length )); do
+    if [[ "${line:right:1}" == ' ' || "${line:right:1}" == $'\t' ]]; then
+      break
+    fi
+    ((right++))
+  done
+
+  token="${line:left:right-left}"
+  token="${token%\"}"
+  token="${token#\"}"
+  token="${token%\'}"
+  token="${token#\'}"
+  printf '%s\t%s\t%s\n' "${left}" "${right}" "${token}"
+}
+
+systemcmd_resolve_dir_token() {
+  local token="$1"
+  local candidate
+
+  [[ -z "${token}" ]] && return 1
+
+  case "${token}" in
+    "~"*) token="${HOME}${token:1}" ;;
+  esac
+
+  if [[ -d "${token}" ]]; then
+    (cd "${token}" 2>/dev/null && pwd -P)
+    return
+  fi
+
+  return 1
+}
+
+systemcmd_quote_path() {
+  local path="$1"
+  if [[ "${path}" == *[[:space:]]* ]]; then
+    printf '"%s"' "${path}"
+  else
+    printf '%s' "${path}"
+  fi
+}
+
+systemcmd_replace_current_token() {
+  local replacement="$1"
+  local left right token
+  IFS=$'\t' read -r left right token < <(systemcmd_current_token_bounds)
+
+  READLINE_LINE="${READLINE_LINE:0:left}${replacement}${READLINE_LINE:right}"
+  READLINE_POINT=$(( left + ${#replacement} ))
+}
+
+systemcmd_list_shallow() {
+  local root="$1"
+
+  find "${root}" -mindepth 1 -maxdepth 1 -type d -print 2>/dev/null
+  find "${root}" -mindepth 1 -maxdepth 1 ! -type d -print 2>/dev/null
+}
+
+systemcmd_find_with_prune() {
+  local root="$1"
+  local first=1
+  local skip_dir
+  local -a find_args skip_dirs
+
+  IFS=',' read -r -a skip_dirs <<< "${SYSTEMCMD_FZF_SKIP_DIRS}"
+  find_args=("${root}" -mindepth 1)
+
+  if ((${#skip_dirs[@]} > 0)); then
+    find_args+=('(')
+    for skip_dir in "${skip_dirs[@]}"; do
+      if (( first == 0 )); then
+        find_args+=(-o)
+      fi
+      find_args+=(-name "${skip_dir}")
+      first=0
+    done
+    find_args+=(')' -prune -o -print)
+  else
+    find_args+=(-print)
+  fi
+
+  find "${find_args[@]}" 2>/dev/null
+}
+
+systemcmd_run_file_picker() {
+  local root="$1"
+  local initial_query="$2"
+  local directory_mode="$3"
+  local selected
+  local -a fzf_args
+
+  fzf_args=(
+    --layout reverse
+    --border
+    --cycle
+    --prompt 'files > '
+    --preview "${SYSTEMCMD_PREVIEW}"
+    --preview-window 'right:60%:wrap'
+    --color "${SYSTEMCMD_FZF_COLOR}"
+  )
+
+  if [[ -n "${initial_query}" ]]; then
+    fzf_args+=(--query "${initial_query}")
+  fi
+
+  if [[ "${directory_mode}" == '1' ]]; then
+    selected="$(systemcmd_list_shallow "${root}" | fzf "${fzf_args[@]}")" || return 1
+    printf '%s\n' "${selected}"
+    return 0
+  fi
+
+  if systemcmd_has_fzf_walker; then
+    selected="$(
+      cd "${root}" 2>/dev/null && \
+      fzf "${fzf_args[@]}" \
+        --scheme path \
+        --walker 'file,dir,hidden' \
+        --walker-root "${root}" \
+        --walker-skip "${SYSTEMCMD_FZF_SKIP_DIRS}"
+    )" || return 1
+
+    if [[ "${selected}" != /* ]]; then
+      selected="${root%/}/${selected}"
+    fi
+    printf '%s\n' "${selected}"
+    return 0
+  fi
+
+  selected="$(
+    systemcmd_find_with_prune "${root}" |
+      sed "s#^${root%/}/##" |
+      fzf "${fzf_args[@]}"
+  )" || return 1
+
+  if [[ "${selected}" != /* ]]; then
+    selected="${root%/}/${selected}"
+  fi
+  printf '%s\n' "${selected}"
+}
+
+systemcmd_get_history_entries() {
+  builtin history |
+    sed 's/^[[:space:]]*[0-9]\+[[:space:]]*//' |
+    awk '{
+      lines[NR] = $0
+    }
+    END {
+      for (i = NR; i >= 1; i--) {
+        if (length(lines[i]) == 0) {
+          continue
+        }
+        if (!seen[lines[i]]++) {
+          print lines[i]
+        }
+      }
+    }'
+}
+
+systemcmd_get_favorites() {
+  if [[ ! -f "${SYSTEMCMD_HISTORY_FAVORITES_PATH}" ]]; then
+    return
+  fi
+
+  awk 'NF && !seen[$0]++ { print $0 }' "${SYSTEMCMD_HISTORY_FAVORITES_PATH}"
+}
+
+systemcmd_save_favorites() {
+  : > "${SYSTEMCMD_HISTORY_FAVORITES_PATH}"
+  if (($# > 0)); then
+    printf '%s\n' "$@" > "${SYSTEMCMD_HISTORY_FAVORITES_PATH}"
+  fi
+}
+
+systemcmd_update_history_preview() {
+  {
+    printf 'Favoriler\n\n'
+    if (($# == 0)); then
+      printf 'Henuz favori yok.\n'
+      return
+    fi
+
+    local index=1
+    local line
+    for line in "$@"; do
+      line="${line//$'\t'/ }"
+      line="${line//$'\n'/ <nl> }"
+      if ((${#line} > 140)); then
+        line="${line:0:140}..."
+      fi
+      printf '[%02d] %s\n' "${index}" "${line}"
+      ((index++))
+    done
+  } > "${SYSTEMCMD_HISTORY_PREVIEW_PATH}"
+}
+
+systemcmd_is_favorite() {
+  local command="$1"
+  shift
+  local item
+  for item in "$@"; do
+    [[ "${item}" == "${command}" ]] && return 0
+  done
+  return 1
+}
+
+systemcmd_toggle_favorite() {
+  local command="$1"
+  shift
+  local -a favorites=("$@")
+  local -a updated=()
+  local item
+  local found=0
+
+  for item in "${favorites[@]}"; do
+    if [[ "${item}" == "${command}" ]]; then
+      found=1
+      continue
+    fi
+    updated+=("${item}")
+  done
+
+  if (( found == 0 )); then
+    updated=("${command}" "${updated[@]}")
+  fi
+
+  systemcmd_save_favorites "${updated[@]}"
+}
+
+system() {
+  cat <<'EOF'
+systemcmd
+
+  Ctrl+f : hizli dosya secici
+  Ctrl+r : favorili gecmis aramasi
+  ll     : gizli dosyalarla listele
+EOF
+}
+
+alias systemcmd='system'
+
+systemcmd_file_widget() {
+  if ! command -v fzf >/dev/null 2>&1; then
+    return
+  fi
+
+  local left right token root initial_query directory_mode selected_file
+  IFS=$'\t' read -r left right token < <(systemcmd_current_token_bounds)
+
+  root="${PWD}"
+  initial_query="${token}"
+  directory_mode='0'
+
+  if resolved_root="$(systemcmd_resolve_dir_token "${token}")"; then
+    root="${resolved_root}"
+    initial_query=''
+    directory_mode='1'
+  fi
+
+  selected_file="$(systemcmd_run_file_picker "${root}" "${initial_query}" "${directory_mode}")" || return
+  [[ -z "${selected_file}" ]] && return
+
+  systemcmd_replace_current_token "$(systemcmd_quote_path "${selected_file}")"
+}
+
+systemcmd_history_widget() {
+  if ! command -v fzf >/dev/null 2>&1; then
+    return
+  fi
+
+  local query output pressed selected_line encoded_command selected_command
+  local entry item marker id display payload is_favorite
+  local -a history_entries favorites ordered items output_lines history_fzf_args
+
+  mapfile -t history_entries < <(systemcmd_get_history_entries)
+  mapfile -t favorites < <(systemcmd_get_favorites)
+  [[ ${#history_entries[@]} -eq 0 ]] && return
+
+  query="${READLINE_LINE}"
+
+  while :; do
+    ordered=()
+    for item in "${favorites[@]}"; do
+      for entry in "${history_entries[@]}"; do
+        if [[ "${entry}" == "${item}" ]]; then
+          ordered+=("${entry}")
+          break
+        fi
+      done
+    done
+
+    for entry in "${history_entries[@]}"; do
+      if ! systemcmd_is_favorite "${entry}" "${favorites[@]}"; then
+        ordered+=("${entry}")
+      fi
+    done
+
+    items=()
+    id=1
+    for entry in "${ordered[@]}"; do
+      is_favorite='0'
+      marker=' '
+      display="${entry//$'\t'/ }"
+      display="${display//$'\n'/ <nl> }"
+      if ((${#display} > 220)); then
+        display="${display:0:220}..."
+      fi
+
+      if systemcmd_is_favorite "${entry}" "${favorites[@]}"; then
+        is_favorite='1'
+        marker=$'\033[38;5;214m*\033[0m'
+        display="$(printf '\033[38;5;214m%s\033[0m' "${display}")"
+      fi
+
+      payload="$(printf '%s' "${entry}" | base64 | tr -d '\n')"
+      items+=("$(printf '%b \033[38;5;245m[%04d]\033[0m %b\t%s\t%s' "${marker}" "${id}" "${display}" "${is_favorite}" "${payload}")")
+      ((id++))
+    done
+
+    systemcmd_update_history_preview "${favorites[@]}"
+    history_fzf_args=(
+      --ansi
+      --layout reverse
+      --border
+      --cycle
+      --delimiter $'\t'
+      --with-nth 1
+      --nth 1
+      --print-query
+      --expect f
+      --prompt 'history > '
+      --bind 'ctrl-r:toggle-sort'
+      --preview "cat '${SYSTEMCMD_HISTORY_PREVIEW_PATH}'"
+      --preview-window 'right,50%,wrap,border-left'
+      --color "${SYSTEMCMD_FZF_COLOR}"
+    )
+
+    if [[ -n "${query}" ]]; then
+      history_fzf_args+=(--query "${query}")
+    fi
+
+    output="$(
+      printf '%s\n' "${items[@]}" |
+      fzf "${history_fzf_args[@]}"
+    )" || return
+
+    mapfile -t output_lines <<< "${output}"
+    query="${output_lines[0]}"
+    pressed="${output_lines[1]}"
+    selected_line="${output_lines[2]}"
+    [[ -z "${selected_line}" ]] && return
+
+    encoded_command="$(printf '%s' "${selected_line}" | awk -F '\t' '{print $3}')"
+    selected_command="$(printf '%s' "${encoded_command}" | base64 --decode 2>/dev/null)"
+    [[ -z "${selected_command}" ]] && return
+
+    if [[ "${pressed}" == 'f' ]]; then
+      systemcmd_toggle_favorite "${selected_command}" "${favorites[@]}"
+      mapfile -t favorites < <(systemcmd_get_favorites)
+      continue
+    fi
+
+    READLINE_LINE="${selected_command}"
+    READLINE_POINT=${#READLINE_LINE}
+    return
+  done
+}
+
+if [[ -f /usr/share/bash-completion/bash_completion ]]; then
+  # shellcheck disable=SC1091
+  . /usr/share/bash-completion/bash_completion
+fi
+
+if command -v bind >/dev/null 2>&1; then
+  bind -x '"\C-f":systemcmd_file_widget'
+  bind -x '"\C-r":systemcmd_history_widget'
+fi
+
+PS1='\[\033[01;32m\]\u@\h\[\033[00m\] \[\033[01;36m\]\w\[\033[00m\] \$ '

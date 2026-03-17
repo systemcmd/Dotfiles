@@ -61,4 +61,4 @@ function Invoke-DockerToolkit {
 }
 
 # Alias Oluşturma
-New-Alias -Name 'dockerhelp' -Value 'Invoke-DockerToolkit'
+Set-Alias -Name 'dockerhelp' -Value 'Invoke-DockerToolkit' -Option AllScope -Scope Global -Force

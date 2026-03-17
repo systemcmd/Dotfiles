@@ -79,4 +79,4 @@ Red Team, organizasyonların zafiyetlerini tespit ederek daha güçlü bir siber
 }
 
 # Alias Oluşturma
-New-Alias -Name 'redteam' -Value 'Invoke-RedTeam'
+Set-Alias -Name 'redteam' -Value 'Invoke-RedTeam' -Option AllScope -Scope Global -Force
