@@ -9,7 +9,7 @@ export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS:---layout=reverse --border}"
 export SYSTEMCMD_HOME="${HOME}/.config/systemcmd"
 export SYSTEMCMD_HISTORY_FAVORITES_PATH="${SYSTEMCMD_HISTORY_FAVORITES_PATH:-${HOME}/.systemcmd-history-favorites}"
 export SYSTEMCMD_HISTORY_PREVIEW_PATH="${SYSTEMCMD_HOME}/history-preview.txt"
-export SYSTEMCMD_FZF_COLOR='fg:#d6d3d1,fg+:#fdba74,bg:-1,bg+:-1,gutter:-1,prompt:#a8a29e,pointer:#f97316,marker:#f59e0b,spinner:#a8a29e,hl:#f59e0b,hl+:#fb923c,info:#78716c,border:#6b4f2c,preview-border:#6b4f2c'
+export SYSTEMCMD_FZF_COLOR='fg:#d1d1d1,fg+:#5effc3,bg:-1,bg+:-1,gutter:-1,prompt:#5ac8ff,pointer:#ff5eed,marker:#5effc3,spinner:#5ac8ff,hl:#5c78ff,hl+:#5ac8ff,info:#7e7e7e,border:#2f2f2f,preview-border:#2f2f2f'
 export SYSTEMCMD_FZF_SKIP_DIRS='.git,node_modules,dist,build,target,.venv,venv,__pycache__,.next,.nuxt,.cache,bin,obj,vendor,coverage,out,release,debug,.pytest_cache,.mypy_cache,.tox'
 
 mkdir -p "${SYSTEMCMD_HOME}"
@@ -256,6 +256,65 @@ systemcmd_save_favorites() {
   fi
 }
 
+systemcmd_history_summary() {
+  local command="$1"
+  local normalized
+
+  normalized="$(printf '%s' "${command}" | tr '\t' ' ' | tr '[:upper:]' '[:lower:]')"
+
+  case "${normalized}" in
+    git\ status*) printf 'Repo durumunu gosterir.' ;;
+    git\ pull*) printf 'Uzak degisiklikleri ceker.' ;;
+    git\ push*) printf 'Commitleri uzak depoya yollar.' ;;
+    git\ commit*) printf 'Yeni commit olusturur.' ;;
+    git\ add*) printf 'Dosyalari stage alanina ekler.' ;;
+    git\ switch*|git\ checkout*) printf 'Branch veya dosya degistirir.' ;;
+    git\ restore*|git\ reset*) printf 'Degisiklikleri geri alir.' ;;
+    npm\ run\ dev*|pnpm\ dev*|pnpm\ run\ dev*|yarn\ dev*) printf 'Gelistirme sunucusunu baslatir.' ;;
+    npm\ run\ build*|pnpm\ build*|pnpm\ run\ build*|yarn\ build*) printf 'Projeyi derler.' ;;
+    npm\ test*|npm\ run\ test*|pnpm\ test*|pnpm\ run\ test*|yarn\ test*) printf 'Testleri calistirir.' ;;
+    npm\ install*|npm\ i*|pnpm\ install*|yarn\ install*) printf 'JavaScript bagimliliklarini kurar.' ;;
+    docker\ ps*) printf 'Calisan containerlari listeler.' ;;
+    docker\ compose\ up*) printf 'Servisleri ayaga kaldirir.' ;;
+    docker\ compose\ down*) printf 'Servisleri durdurur.' ;;
+    docker\ logs*|docker\ log*) printf 'Container loglarini gosterir.' ;;
+    docker\ exec*|docker\ run*) printf 'Container icinde komut calistirir.' ;;
+    kubectl\ get*) printf 'Kubernetes kaynaklarini listeler.' ;;
+    kubectl\ apply*) printf 'Manifest degisikliklerini uygular.' ;;
+    kubectl\ logs*) printf 'Pod loglarini gosterir.' ;;
+    python*|python3*|py\ *) printf 'Python komutunu calistirir.' ;;
+    pip\ install*|pip3\ install*) printf 'Python paketi kurar.' ;;
+    uv\ run*) printf 'Komutu uv ortaminda calistirir.' ;;
+    uv\ sync*) printf 'Python bagimliliklarini senkronlar.' ;;
+    cargo\ run*) printf 'Rust uygulamasini calistirir.' ;;
+    cargo\ build*) printf 'Rust projesini derler.' ;;
+    cargo\ test*) printf 'Rust testlerini calistirir.' ;;
+    go\ run*) printf 'Go kodunu calistirir.' ;;
+    go\ build*) printf 'Go binary dosyasi uretir.' ;;
+    go\ test*) printf 'Go testlerini calistirir.' ;;
+    dotnet\ run*) printf '.NET uygulamasini calistirir.' ;;
+    dotnet\ build*) printf '.NET projesini derler.' ;;
+    dotnet\ test*) printf '.NET testlerini calistirir.' ;;
+    code*) printf 'Editoru acar.' ;;
+    ssh*) printf 'Uzak sunucuya baglanir.' ;;
+    scp*|rsync*) printf 'Dosya aktarimi yapar.' ;;
+    curl*|wget*) printf 'Veri indirir veya istek atar.' ;;
+    systemctl*) printf 'Servisleri yonetir.' ;;
+    journalctl*) printf 'Sistem loglarini gosterir.' ;;
+    cd*) printf 'Klasor degistirir.' ;;
+    ls*|ll*|dir*) printf 'Klasor icerigini listeler.' ;;
+    mkdir*|md*) printf 'Yeni klasor olusturur.' ;;
+    rm*|del*|erase*) printf 'Dosya veya klasor siler.' ;;
+    cp*|copy*) printf 'Dosya kopyalar.' ;;
+    mv*|move*|ren*|rename*) printf 'Dosya veya klasoru tasir.' ;;
+    htop*|top*) printf 'Canli sistem kullanimini gosterir.' ;;
+    pwsh*|powershell*) printf 'PowerShell komutu calistirir.' ;;
+    *)
+      printf "'%s' komutunu calistirir." "$(printf '%s' "${command}" | awk '{print $1}')"
+      ;;
+  esac
+}
+
 systemcmd_update_history_preview() {
   {
     printf 'Favoriler\n\n'
@@ -266,13 +325,15 @@ systemcmd_update_history_preview() {
 
     local index=1
     local line
+    local summary
     for line in "$@"; do
       line="${line//$'\t'/ }"
       line="${line//$'\n'/ <nl> }"
-      if ((${#line} > 140)); then
-        line="${line:0:140}..."
+      summary="$(systemcmd_history_summary "${line}")"
+      if ((${#line} > 76)); then
+        line="${line:0:76}..."
       fi
-      printf '[%02d] %s\n' "${index}" "${line}"
+      printf '[%02d] %s :: %s\n' "${index}" "${line}" "${summary}"
       ((index++))
     done
   } > "${SYSTEMCMD_HISTORY_PREVIEW_PATH}"
@@ -413,6 +474,7 @@ systemcmd_history_widget() {
       --print-query
       --expect f
       --prompt 'history > '
+      --header 'F: favori ac/kapat'
       --bind 'ctrl-r:toggle-sort'
       --preview "cat '${SYSTEMCMD_HISTORY_PREVIEW_PATH}'"
       --preview-window 'right,50%,wrap,border-left'

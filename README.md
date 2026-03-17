@@ -24,6 +24,7 @@ Kurulum:
 - PowerShell 7, `fzf`, `bat` ve `Neovim` icin `winget` denemesi yapar
 - `PSReadLine`, `Terminal-Icons` ve `PSFzf` modullerini kurar
 - Dosyalari `Documents\PowerShell\systemcmd` altina kopyalar
+- `%LOCALAPPDATA%\nvim` altina `systemcmd` Neovim ayarlarini kurar
 - Var olan profili ezmek yerine bootstrap satiri ekler
 
 ### Linux
@@ -38,8 +39,9 @@ bash install.sh
 
 Kurulum:
 
-- `apt`, `dnf`, `pacman`, `zypper` veya `apk` ile gerekli paketleri kurmayi dener
+- `apt`, `dnf`, `pacman`, `zypper` veya `apk` ile `fzf`, `bat`, `Neovim` ve clipboard araclarini kurmayi dener
 - `~/.config/systemcmd/systemcmd.bashrc` dosyasini yerlestirir
+- `~/.config/nvim` altina `systemcmd` Neovim ayarlarini kurar
 - `~/.bashrc` icine tek satirlik bootstrap ekler
 
 ## Neler Duzenlendi
@@ -47,6 +49,9 @@ Kurulum:
 - Windows profili artik kosulsuz hata uretmiyor
 - Eksik moduller ve komutlar sessizce pas geciliyor
 - `Show-Ports` fonksiyonu eklendi
+- `Ctrl+R` favori sistemi Windows ve Linux'ta ayni mantikla calisiyor; Linux tarafinda `F: favori ac/kapat` yardim yazisi gorunuyor
+- `systemcmd color` VS Code temasi eklendi; VS Code varsa installer otomatik yukleyip aktif etmeyi dener
+- `systemcmd color` paletine gore hazir Neovim ayarlari eklendi
 - Kurulum scriptleri artik mevcut dosya agaciyla uyumlu
 - Linux installer eski olmayan klasorleri hedeflemiyor
 

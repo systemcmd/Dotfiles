@@ -188,8 +188,156 @@ function Resolve-PwshPath {
     return $null
 }
 
+function Ensure-JsonLikeStringSetting {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Path,
+
+        [Parameter(Mandatory = $true)]
+        [string]$Key,
+
+        [Parameter(Mandatory = $true)]
+        [string]$Value
+    )
+
+    $directoryPath = Split-Path -Parent $Path
+    if (-not (Test-Path -LiteralPath $directoryPath)) {
+        New-Item -ItemType Directory -Path $directoryPath -Force | Out-Null
+    }
+
+    $settingText = ('"{0}": "{1}"' -f $Key, $Value)
+
+    if (-not (Test-Path -LiteralPath $Path)) {
+        Set-Content -LiteralPath $Path -Value ("{`r`n  $settingText`r`n}`r`n") -Encoding UTF8
+        return
+    }
+
+    $content = Get-Content -LiteralPath $Path -Raw
+    if ([string]::IsNullOrWhiteSpace($content)) {
+        Set-Content -LiteralPath $Path -Value ("{`r`n  $settingText`r`n}`r`n") -Encoding UTF8
+        return
+    }
+
+    $keyPattern = '"' + [regex]::Escape($Key) + '"\s*:\s*"[^"]*"'
+    if ([regex]::IsMatch($content, $keyPattern)) {
+        $updatedContent = [regex]::Replace($content, $keyPattern, $settingText, 1)
+        Set-Content -LiteralPath $Path -Value $updatedContent -Encoding UTF8
+        return
+    }
+
+    $trimmed = $content.TrimEnd()
+    $closingIndex = $trimmed.LastIndexOf('}')
+    if ($closingIndex -lt 0) {
+        Set-Content -LiteralPath $Path -Value ("{`r`n  $settingText`r`n}`r`n") -Encoding UTF8
+        return
+    }
+
+    $before = $trimmed.Substring(0, $closingIndex).TrimEnd()
+    $after = $trimmed.Substring($closingIndex)
+    $needsComma = ($before -notmatch '\{\s*$') -and ($before[-1] -ne ',')
+    $updated = $before + $(if ($needsComma) { ',' } else { '' }) + "`r`n  $settingText`r`n" + $after
+    Set-Content -LiteralPath $Path -Value $updated -Encoding UTF8
+}
+
+function Get-VSCodeTargets {
+    $targets = @(
+        @{
+            Name         = 'VS Code'
+            CommandNames = @('code.cmd', 'code.exe')
+            Extensions   = Join-Path $env:USERPROFILE '.vscode\extensions'
+            Settings     = Join-Path $env:APPDATA 'Code\User\settings.json'
+        },
+        @{
+            Name         = 'VS Code Insiders'
+            CommandNames = @('code-insiders.cmd', 'code-insiders.exe')
+            Extensions   = Join-Path $env:USERPROFILE '.vscode-insiders\extensions'
+            Settings     = Join-Path $env:APPDATA 'Code - Insiders\User\settings.json'
+        },
+        @{
+            Name         = 'VSCodium'
+            CommandNames = @('codium.cmd', 'codium.exe')
+            Extensions   = Join-Path $env:USERPROFILE '.vscode-oss\extensions'
+            Settings     = Join-Path $env:APPDATA 'VSCodium\User\settings.json'
+        }
+    )
+
+    foreach ($target in $targets) {
+        $hasCommand = $false
+        foreach ($commandName in $target.CommandNames) {
+            if (Get-Command -Name $commandName -ErrorAction SilentlyContinue) {
+                $hasCommand = $true
+                break
+            }
+        }
+
+        $settingsDir = Split-Path -Parent $target.Settings
+        if ($hasCommand -or (Test-Path -LiteralPath $settingsDir) -or (Test-Path -LiteralPath $target.Extensions)) {
+            [PSCustomObject]$target
+        }
+    }
+}
+
+function Install-SystemCmdVSCodeTheme {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$SourceDir
+    )
+
+    $themeSourceDir = Join-Path $SourceDir 'vscode\systemcmd-color'
+    if (-not (Test-Path -LiteralPath (Join-Path $themeSourceDir 'package.json'))) {
+        return
+    }
+
+    $targets = @(Get-VSCodeTargets)
+    if ($targets.Count -eq 0) {
+        return
+    }
+
+    foreach ($target in $targets) {
+        Write-Step "$($target.Name) icin systemcmd color temasi ayarlaniyor."
+        if (-not (Test-Path -LiteralPath $target.Extensions)) {
+            New-Item -ItemType Directory -Path $target.Extensions -Force | Out-Null
+        }
+
+        $targetDir = Join-Path $target.Extensions 'systemcmd.systemcmd-color'
+        if (Test-Path -LiteralPath $targetDir) {
+            Remove-Item -LiteralPath $targetDir -Recurse -Force
+        }
+
+        Copy-Item -LiteralPath $themeSourceDir -Destination $targetDir -Recurse -Force
+        Ensure-JsonLikeStringSetting -Path $target.Settings -Key 'workbench.colorTheme' -Value 'systemcmd color'
+    }
+}
+
+function Install-SystemCmdNeovimConfig {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$SourceDir
+    )
+
+    $nvimSourceDir = Join-Path $SourceDir 'nvim'
+    if (-not (Test-Path -LiteralPath (Join-Path $nvimSourceDir 'init.lua'))) {
+        return
+    }
+
+    $nvimTargetDir = Join-Path $env:LOCALAPPDATA 'nvim'
+    $targetParent = Split-Path -Parent $nvimTargetDir
+    if (-not (Test-Path -LiteralPath $targetParent)) {
+        New-Item -ItemType Directory -Path $targetParent -Force | Out-Null
+    }
+
+    if (Test-Path -LiteralPath $nvimTargetDir) {
+        $backupDir = '{0}.systemcmd.bak-{1}' -f $nvimTargetDir, (Get-Date -Format 'yyyyMMddHHmmss')
+        Move-Item -LiteralPath $nvimTargetDir -Destination $backupDir -Force
+    }
+
+    Copy-Item -LiteralPath $nvimSourceDir -Destination $nvimTargetDir -Recurse -Force
+}
+
 $resolvedSourceDir = Resolve-InstallSource -PreferredPath $SourceDir
 $windowsSourceDir = Join-Path $resolvedSourceDir 'windows\PowerShell'
+$vscodeThemeSourceDir = Join-Path $resolvedSourceDir 'vscode\systemcmd-color'
+$nvimSourceDir = Join-Path $resolvedSourceDir 'nvim'
 
 if (-not (Test-Path -LiteralPath (Join-Path $windowsSourceDir 'Microsoft.PowerShell_profile.ps1'))) {
     throw 'PowerShell profil dosyalari bulunamadi.'
@@ -226,6 +374,16 @@ if (Test-Path -LiteralPath $terminalSettingsSource) {
     Copy-Item -LiteralPath $terminalSettingsSource -Destination (Join-Path $installRoot 'windows-terminal.settings.template.json') -Force
 }
 
+if (Test-Path -LiteralPath $vscodeThemeSourceDir) {
+    $vscodeInstallRoot = Join-Path $installRoot 'vscode'
+    New-Item -ItemType Directory -Path $vscodeInstallRoot -Force | Out-Null
+    Copy-Item -LiteralPath $vscodeThemeSourceDir -Destination (Join-Path $vscodeInstallRoot 'systemcmd-color') -Recurse -Force
+}
+
+if (Test-Path -LiteralPath $nvimSourceDir) {
+    Copy-Item -LiteralPath $nvimSourceDir -Destination (Join-Path $installRoot 'nvim') -Recurse -Force
+}
+
 $bootstrapBlock = @"
 # systemcmd bootstrap
 `$systemCmdProfile = Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'PowerShell\systemcmd\Microsoft.PowerShell_profile.ps1'
@@ -237,6 +395,9 @@ if (Test-Path -LiteralPath `$systemCmdProfile) {
 Write-Step 'Profil bootstrap dosyalari ayarlaniyor.'
 Ensure-ProfileBootstrap -ProfilePath $pwshProfilePath -BootstrapBlock $bootstrapBlock
 Ensure-ProfileBootstrap -ProfilePath $legacyProfilePath -BootstrapBlock $bootstrapBlock
+Install-SystemCmdVSCodeTheme -SourceDir $resolvedSourceDir
+Write-Step 'Neovim konfigurasyonu ayarlaniyor.'
+Install-SystemCmdNeovimConfig -SourceDir $resolvedSourceDir
 
 if ($pwshPath) {
     Write-Step 'Profil yukleme testi yapiliyor.'

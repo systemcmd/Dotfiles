@@ -69,31 +69,31 @@ install_packages() {
   if command -v apt-get >/dev/null 2>&1; then
     log "apt ile gerekli paketler yukleniyor."
     ${sudo_cmd} apt-get update
-    ${sudo_cmd} apt-get install -y bash curl git fzf bat
+    ${sudo_cmd} apt-get install -y bash curl git fzf bat neovim xclip wl-clipboard || ${sudo_cmd} apt-get install -y bash curl git fzf bat neovim xclip || ${sudo_cmd} apt-get install -y bash curl git fzf bat neovim
     return
   fi
 
   if command -v dnf >/dev/null 2>&1; then
     log "dnf ile gerekli paketler yukleniyor."
-    ${sudo_cmd} dnf install -y bash curl git fzf bat
+    ${sudo_cmd} dnf install -y bash curl git fzf bat neovim xclip wl-clipboard || ${sudo_cmd} dnf install -y bash curl git fzf bat neovim xclip || ${sudo_cmd} dnf install -y bash curl git fzf bat neovim
     return
   fi
 
   if command -v pacman >/dev/null 2>&1; then
     log "pacman ile gerekli paketler yukleniyor."
-    ${sudo_cmd} pacman -Sy --noconfirm bash curl git fzf bat
+    ${sudo_cmd} pacman -Sy --noconfirm bash curl git fzf bat neovim xclip wl-clipboard || ${sudo_cmd} pacman -Sy --noconfirm bash curl git fzf bat neovim xclip || ${sudo_cmd} pacman -Sy --noconfirm bash curl git fzf bat neovim
     return
   fi
 
   if command -v zypper >/dev/null 2>&1; then
     log "zypper ile gerekli paketler yukleniyor."
-    ${sudo_cmd} zypper --non-interactive install bash curl git fzf bat
+    ${sudo_cmd} zypper --non-interactive install bash curl git fzf bat neovim xclip wl-clipboard || ${sudo_cmd} zypper --non-interactive install bash curl git fzf bat neovim xclip || ${sudo_cmd} zypper --non-interactive install bash curl git fzf bat neovim
     return
   fi
 
   if command -v apk >/dev/null 2>&1; then
     log "apk ile gerekli paketler yukleniyor."
-    ${sudo_cmd} apk add bash curl git fzf bat
+    ${sudo_cmd} apk add bash curl git fzf bat neovim xclip wl-clipboard || ${sudo_cmd} apk add bash curl git fzf bat neovim xclip || ${sudo_cmd} apk add bash curl git fzf bat neovim
     return
   fi
 
@@ -123,6 +123,90 @@ install_systemcmd_profile() {
   fi
 }
 
+install_neovim_config() {
+  local source_dir="$1"
+  local nvim_source_dir="${source_dir}/nvim"
+  local nvim_target_dir="${HOME}/.config/nvim"
+
+  [[ -f "${nvim_source_dir}/init.lua" ]] || return
+
+  mkdir -p "${HOME}/.config"
+
+  if [[ -d "${nvim_target_dir}" ]]; then
+    mv "${nvim_target_dir}" "${nvim_target_dir}.systemcmd.bak.$(date +%Y%m%d%H%M%S)"
+  fi
+
+  cp -R "${nvim_source_dir}" "${nvim_target_dir}"
+}
+
+ensure_json_like_string_setting() {
+  local path="$1"
+  local key="$2"
+  local value="$3"
+  local dir tmp escaped_key
+
+  dir="$(dirname -- "${path}")"
+  mkdir -p "${dir}"
+
+  if [[ ! -f "${path}" || ! -s "${path}" ]]; then
+    printf '{\n  "%s": "%s"\n}\n' "${key}" "${value}" > "${path}"
+    return
+  fi
+
+  escaped_key="$(printf '%s' "${key}" | sed 's/[.[\*^$()+?{}|]/\\&/g')"
+  tmp="$(mktemp)"
+
+  if grep -Eq "\"${escaped_key}\"[[:space:]]*:" "${path}"; then
+    sed -E "s#(\"${escaped_key}\"[[:space:]]*:[[:space:]]*\")([^\"]*)(\")#\\1${value}\\3#" "${path}" > "${tmp}"
+    mv "${tmp}" "${path}"
+    return
+  fi
+
+  if grep -Eq '^[[:space:]]*\{[[:space:]]*\}[[:space:]]*$' "${path}"; then
+    printf '{\n  "%s": "%s"\n}\n' "${key}" "${value}" > "${path}"
+    rm -f "${tmp}"
+    return
+  fi
+
+  sed '$ s/}[[:space:]]*$/,\n  "'"${key}"'": "'"${value}"'"\n}/' "${path}" > "${tmp}"
+  mv "${tmp}" "${path}"
+}
+
+install_vscode_theme() {
+  local source_dir="$1"
+  local theme_source_dir="${source_dir}/vscode/systemcmd-color"
+  local theme_label='systemcmd color'
+
+  [[ -f "${theme_source_dir}/package.json" ]] || return
+
+  local targets=()
+
+  if command -v code >/dev/null 2>&1 || [[ -d "${HOME}/.config/Code" || -d "${HOME}/.vscode/extensions" ]]; then
+    targets+=("${HOME}/.vscode/extensions|${HOME}/.config/Code/User/settings.json|VS Code")
+  fi
+
+  if command -v code-insiders >/dev/null 2>&1 || [[ -d "${HOME}/.config/Code - Insiders" || -d "${HOME}/.vscode-insiders/extensions" ]]; then
+    targets+=("${HOME}/.vscode-insiders/extensions|${HOME}/.config/Code - Insiders/User/settings.json|VS Code Insiders")
+  fi
+
+  if command -v codium >/dev/null 2>&1 || [[ -d "${HOME}/.config/VSCodium" || -d "${HOME}/.vscode-oss/extensions" ]]; then
+    targets+=("${HOME}/.vscode-oss/extensions|${HOME}/.config/VSCodium/User/settings.json|VSCodium")
+  fi
+
+  [[ ${#targets[@]} -eq 0 ]] && return
+
+  local target extensions_dir settings_path target_name theme_target_dir
+  for target in "${targets[@]}"; do
+    IFS='|' read -r extensions_dir settings_path target_name <<< "${target}"
+    log "${target_name} icin systemcmd color temasi ayarlaniyor."
+    mkdir -p "${extensions_dir}"
+    theme_target_dir="${extensions_dir}/systemcmd.systemcmd-color"
+    rm -rf "${theme_target_dir}"
+    cp -R "${theme_source_dir}" "${theme_target_dir}"
+    ensure_json_like_string_setting "${settings_path}" 'workbench.colorTheme' "${theme_label}"
+  done
+}
+
 main() {
   local source_dir
   source_dir="$(resolve_source_dir)"
@@ -134,6 +218,8 @@ main() {
 
   install_packages
   install_systemcmd_profile "${source_dir}"
+  install_vscode_theme "${source_dir}"
+  install_neovim_config "${source_dir}"
 
   log "Kurulum tamamlandi."
   log "Yeni bir terminal acip 'system' komutunu kullanabilirsiniz."

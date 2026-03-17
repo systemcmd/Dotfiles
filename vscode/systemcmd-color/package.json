@@ -1,0 +1,22 @@
+{
+  "name": "systemcmd-color",
+  "displayName": "systemcmd color",
+  "publisher": "systemcmd",
+  "description": "systemcmd color theme for VS Code.",
+  "version": "1.0.0",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Themes"
+  ],
+  "contributes": {
+    "themes": [
+      {
+        "label": "systemcmd color",
+        "uiTheme": "vs-dark",
+        "path": "./themes/systemcmd-color-theme.json"
+      }
+    ]
+  }
+}

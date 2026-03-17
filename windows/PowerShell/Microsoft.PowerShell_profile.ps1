@@ -188,6 +188,10 @@ function Get-SystemCmdFzfFilePreviewCommand {
     return 'cat {}'
 }
 
+function Get-SystemCmdFzfColorOption {
+    return 'fg:#d1d1d1,fg+:#5effc3,bg:-1,bg+:-1,gutter:-1,prompt:#5ac8ff,pointer:#ff5eed,marker:#5effc3,spinner:#5ac8ff,hl:#5c78ff,hl+:#5ac8ff,info:#7e7e7e,border:#2f2f2f,preview-border:#2f2f2f'
+}
+
 function Get-SystemCmdCtrlFListScriptPath {
     return (Join-Path $script:SystemCmdRoot 'systemcmd-ctrlf-list.ps1')
 }
@@ -402,6 +406,7 @@ function Invoke-SystemCmdCtrlFPicker {
         '--border',
         '--cycle',
         '--prompt', 'files > ',
+        '--color', (Get-SystemCmdFzfColorOption),
         '--preview', $previewCommand,
         '--preview-window', 'right:60%:wrap'
     )
@@ -719,6 +724,79 @@ function ConvertTo-SystemCmdHistoryDisplayText {
     return $singleLine
 }
 
+function Get-SystemCmdHistorySummary {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Command
+    )
+
+    $singleLine = ($Command -replace "\r?\n", ' ' -replace "`t", ' ').Trim()
+    if ([string]::IsNullOrWhiteSpace($singleLine)) {
+        return 'Komutu tekrar calistirir.'
+    }
+
+    $normalized = $singleLine.ToLowerInvariant()
+
+    switch -Regex ($normalized) {
+        '^\s*git\s+status(?:\s|$)' { return 'Repo durumunu gosterir.' }
+        '^\s*git\s+pull(?:\s|$)' { return 'Uzak degisiklikleri ceker.' }
+        '^\s*git\s+push(?:\s|$)' { return 'Commitleri uzak depoya yollar.' }
+        '^\s*git\s+commit(?:\s|$)' { return 'Yeni commit olusturur.' }
+        '^\s*git\s+add(?:\s|$)' { return 'Dosyalari stage alanina ekler.' }
+        '^\s*git\s+(switch|checkout)(?:\s|$)' { return 'Branch veya dosya degistirir.' }
+        '^\s*git\s+(restore|reset)(?:\s|$)' { return 'Degisiklikleri geri alir.' }
+        '^\s*(npm|pnpm|yarn)\s+(run\s+)?dev(?:\s|$)' { return 'Gelistirme sunucusunu baslatir.' }
+        '^\s*(npm|pnpm|yarn)\s+(run\s+)?build(?:\s|$)' { return 'Projeyi derler.' }
+        '^\s*(npm|pnpm|yarn)\s+(run\s+)?test(?:\s|$)' { return 'Testleri calistirir.' }
+        '^\s*(npm|pnpm|yarn)\s+(install|i)(?:\s|$)' { return 'JavaScript bagimliliklarini kurar.' }
+        '^\s*docker\s+ps(?:\s|$)' { return 'Calisan containerlari listeler.' }
+        '^\s*docker\s+compose\s+up(?:\s|$)' { return 'Servisleri ayaga kaldirir.' }
+        '^\s*docker\s+compose\s+down(?:\s|$)' { return 'Servisleri durdurur.' }
+        '^\s*docker\s+(logs|log)(?:\s|$)' { return 'Container loglarini gosterir.' }
+        '^\s*docker\s+(exec|run)(?:\s|$)' { return 'Container icinde komut calistirir.' }
+        '^\s*kubectl\s+get(?:\s|$)' { return 'Kubernetes kaynaklarini listeler.' }
+        '^\s*kubectl\s+apply(?:\s|$)' { return 'Manifest degisikliklerini uygular.' }
+        '^\s*kubectl\s+logs(?:\s|$)' { return 'Pod loglarini gosterir.' }
+        '^\s*(python|python3|py)\s+' { return 'Python komutunu calistirir.' }
+        '^\s*(pip|pip3)\s+install(?:\s|$)' { return 'Python paketi kurar.' }
+        '^\s*uv\s+run(?:\s|$)' { return 'Komutu uv ortaminda calistirir.' }
+        '^\s*uv\s+sync(?:\s|$)' { return 'Python bagimliliklarini senkronlar.' }
+        '^\s*cargo\s+run(?:\s|$)' { return 'Rust uygulamasini calistirir.' }
+        '^\s*cargo\s+build(?:\s|$)' { return 'Rust projesini derler.' }
+        '^\s*cargo\s+test(?:\s|$)' { return 'Rust testlerini calistirir.' }
+        '^\s*go\s+run(?:\s|$)' { return 'Go kodunu calistirir.' }
+        '^\s*go\s+build(?:\s|$)' { return 'Go binary dosyasi uretir.' }
+        '^\s*go\s+test(?:\s|$)' { return 'Go testlerini calistirir.' }
+        '^\s*dotnet\s+run(?:\s|$)' { return '.NET uygulamasini calistirir.' }
+        '^\s*dotnet\s+build(?:\s|$)' { return '.NET projesini derler.' }
+        '^\s*dotnet\s+test(?:\s|$)' { return '.NET testlerini calistirir.' }
+        '^\s*code(?:\s|$)' { return 'Editoru acar.' }
+        '^\s*ssh(?:\s|$)' { return 'Uzak sunucuya baglanir.' }
+        '^\s*(scp|rsync)(?:\s|$)' { return 'Dosya aktarimi yapar.' }
+        '^\s*(curl|wget)(?:\s|$)' { return 'Veri indirir veya istek atar.' }
+        '^\s*(winget|choco|scoop)\s+install(?:\s|$)' { return 'Paket kurar.' }
+        '^\s*(winget|choco|scoop)\s+(upgrade|update)(?:\s|$)' { return 'Paketleri gunceller.' }
+        '^\s*(winget|choco|scoop)\s+search(?:\s|$)' { return 'Paket arar.' }
+        '^\s*systemctl(?:\s|$)' { return 'Servisleri yonetir.' }
+        '^\s*journalctl(?:\s|$)' { return 'Sistem loglarini gosterir.' }
+        '^\s*cd(?:\s|$)' { return 'Klasor degistirir.' }
+        '^\s*(ls|ll|dir)(?:\s|$)' { return 'Klasor icerigini listeler.' }
+        '^\s*(mkdir|md)(?:\s|$)' { return 'Yeni klasor olusturur.' }
+        '^\s*(rm|del|erase|rmrf)(?:\s|$)' { return 'Dosya veya klasor siler.' }
+        '^\s*(cp|copy)(?:\s|$)' { return 'Dosya kopyalar.' }
+        '^\s*(mv|move|ren|rename)(?:\s|$)' { return 'Dosya veya klasoru tasir.' }
+        '^\s*(htop|top)(?:\s|$)' { return 'Canli sistem kullanimini gosterir.' }
+        '^\s*(pwsh|powershell)(?:\s|$)' { return 'PowerShell komutu calistirir.' }
+    }
+
+    $head = ($singleLine -split '\s+', 2)[0]
+    if ([string]::IsNullOrWhiteSpace($head)) {
+        return 'Komutu tekrar calistirir.'
+    }
+
+    return ("'{0}' komutunu calistirir." -f $head)
+}
+
 function Get-SystemCmdHistoryPreviewCachePath {
     return (Join-Path $script:SystemCmdRoot '.systemcmd-history-preview.txt')
 }
@@ -738,11 +816,13 @@ function Update-SystemCmdHistoryPreviewCache {
     } else {
         for ($index = 0; $index -lt $Favorites.Count; $index++) {
             $singleLine = ($Favorites[$index] -replace "\r?\n", ' <nl> ' -replace "`t", ' ').Trim()
-            if ($singleLine.Length -gt 140) {
-                $singleLine = $singleLine.Substring(0, 140) + '...'
+            $summary = Get-SystemCmdHistorySummary -Command $Favorites[$index]
+
+            if ($singleLine.Length -gt 76) {
+                $singleLine = $singleLine.Substring(0, 76) + '...'
             }
 
-            [void]$previewLines.Add(('[{0:D2}] {1}' -f ($index + 1), $singleLine))
+            [void]$previewLines.Add(('[{0:D2}] {1} :: {2}' -f ($index + 1), $singleLine, $summary))
         }
     }
 
@@ -926,7 +1006,7 @@ function Invoke-SystemCmdHistoryPicker {
             '--layout', 'reverse',
             '--border',
             '--cycle',
-            '--color', 'fg:#d6d3d1,fg+:#fdba74,bg:-1,bg+:-1,gutter:-1,prompt:#a8a29e,pointer:#f97316,marker:#f59e0b,spinner:#a8a29e,hl:#f59e0b,hl+:#fb923c,info:#78716c,border:#6b4f2c,preview-border:#6b4f2c',
+            '--color', (Get-SystemCmdFzfColorOption),
             '--delimiter', "`t",
             '--with-nth', '1',
             '--nth', '1',
