@@ -338,6 +338,7 @@ $resolvedSourceDir = Resolve-InstallSource -PreferredPath $SourceDir
 $windowsSourceDir = Join-Path $resolvedSourceDir 'windows\PowerShell'
 $vscodeThemeSourceDir = Join-Path $resolvedSourceDir 'vscode\systemcmd-color'
 $nvimSourceDir = Join-Path $resolvedSourceDir 'nvim'
+$themeSourceDir = Join-Path $resolvedSourceDir 'theme'
 
 if (-not (Test-Path -LiteralPath (Join-Path $windowsSourceDir 'Microsoft.PowerShell_profile.ps1'))) {
     throw 'PowerShell profil dosyalari bulunamadi.'
@@ -384,6 +385,10 @@ if (Test-Path -LiteralPath $nvimSourceDir) {
     Copy-Item -LiteralPath $nvimSourceDir -Destination (Join-Path $installRoot 'nvim') -Recurse -Force
 }
 
+if (Test-Path -LiteralPath $themeSourceDir) {
+    Copy-Item -LiteralPath $themeSourceDir -Destination (Join-Path $installRoot 'theme') -Recurse -Force
+}
+
 $bootstrapBlock = @"
 # systemcmd bootstrap
 `$systemCmdProfile = Join-Path ([Environment]::GetFolderPath('MyDocuments')) 'PowerShell\systemcmd\Microsoft.PowerShell_profile.ps1'
@@ -413,4 +418,4 @@ if ($pwshPath) {
 Write-Host ''
 Write-Host 'systemcmd kurulumu tamamlandi.' -ForegroundColor Green
 Write-Host "Kurulum dizini: $installRoot" -ForegroundColor DarkGray
-Write-Host 'Yeni bir terminal acip `system help` komutunu calistirabilirsiniz.' -ForegroundColor DarkGray
+Write-Host 'Yeni bir terminal acip `systemcmd` komutunu calistirabilirsiniz.' -ForegroundColor DarkGray

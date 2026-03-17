@@ -1,0 +1,37 @@
+{
+  "name": "systemcmd color",
+  "type": "dark",
+  "palette": {
+    "bg": "#1d1d1d",
+    "panel": "#171717",
+    "surface": "#2f2f2f",
+    "line": "#242424",
+    "fg": "#d1d1d1",
+    "muted": "#7e7e7e",
+    "comment": "#6f7480",
+    "blue": "#5c78ff",
+    "cyan": "#5ac8ff",
+    "magenta": "#ff5eed",
+    "purple": "#ba5aff",
+    "green": "#5effc3",
+    "red": "#d35454",
+    "orange": "#d38454",
+    "selection": "#2f2f2f"
+  },
+  "fzf": {
+    "fg": "fg",
+    "fg+": "green",
+    "bg": "-1",
+    "bg+": "-1",
+    "gutter": "-1",
+    "prompt": "cyan",
+    "pointer": "magenta",
+    "marker": "green",
+    "spinner": "cyan",
+    "hl": "blue",
+    "hl+": "cyan",
+    "info": "muted",
+    "border": "surface",
+    "preview-border": "surface"
+  }
+}

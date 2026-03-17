@@ -104,11 +104,21 @@ install_systemcmd_profile() {
   local source_dir="$1"
   local config_dir="${HOME}/.config/systemcmd"
   local target_file="${config_dir}/systemcmd.bashrc"
+  local theme_runtime_file="${config_dir}/systemcmd-theme.generated.sh"
   local bashrc_file="${HOME}/.bashrc"
   local bootstrap_line='[ -f "$HOME/.config/systemcmd/systemcmd.bashrc" ] && . "$HOME/.config/systemcmd/systemcmd.bashrc"'
 
   mkdir -p "${config_dir}"
   cp "${source_dir}/linux/systemcmd.bashrc" "${target_file}"
+
+  if [[ -f "${source_dir}/linux/systemcmd-theme.generated.sh" ]]; then
+    cp "${source_dir}/linux/systemcmd-theme.generated.sh" "${theme_runtime_file}"
+  fi
+
+  if [[ -d "${source_dir}/theme" ]]; then
+    rm -rf "${config_dir}/theme"
+    cp -R "${source_dir}/theme" "${config_dir}/theme"
+  fi
 
   if [[ ! -f "${bashrc_file}" ]]; then
     touch "${bashrc_file}"

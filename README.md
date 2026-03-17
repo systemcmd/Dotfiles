@@ -52,6 +52,9 @@ Kurulum:
 - `Ctrl+R` favori sistemi Windows ve Linux'ta ayni mantikla calisiyor; Linux tarafinda `F: favori ac/kapat` yardim yazisi gorunuyor
 - `systemcmd color` VS Code temasi eklendi; VS Code varsa installer otomatik yukleyip aktif etmeyi dener
 - `systemcmd color` paletine gore hazir Neovim ayarlari eklendi
+- `systemcmd doctor` ile kurulum sagligi kontrol edilebilir
+- `systemcmd` ile TUI ana menu acilir
+- `systemcmd theme build` ile tek kaynak tema dosyasindan VS Code, Neovim ve shell tema ciktilari uretilir
 - Kurulum scriptleri artik mevcut dosya agaciyla uyumlu
 - Linux installer eski olmayan klasorleri hedeflemiyor
 
@@ -60,6 +63,8 @@ Kurulum:
 - `windows/install.ps1`: Windows installer
 - `windows/PowerShell/`: Windows profil ve komut dosyalari
 - `linux/systemcmd.bashrc`: Linux bash profil parcasi
+- `theme/systemcmd-theme-source.json`: Tek kaynak tema paleti
+- `theme/Build-SystemCmdTheme.ps1`: Tema build scripti
 - `install.bat`: Windows icin tek tik giris noktasi
 - `install.sh`: Linux icin terminal giris noktasi
 - `install-linux.desktop`: Linux icin GUI giris noktasi

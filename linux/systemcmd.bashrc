@@ -9,8 +9,18 @@ export FZF_DEFAULT_OPTS="${FZF_DEFAULT_OPTS:---layout=reverse --border}"
 export SYSTEMCMD_HOME="${HOME}/.config/systemcmd"
 export SYSTEMCMD_HISTORY_FAVORITES_PATH="${SYSTEMCMD_HISTORY_FAVORITES_PATH:-${HOME}/.systemcmd-history-favorites}"
 export SYSTEMCMD_HISTORY_PREVIEW_PATH="${SYSTEMCMD_HOME}/history-preview.txt"
-export SYSTEMCMD_FZF_COLOR='fg:#d1d1d1,fg+:#5effc3,bg:-1,bg+:-1,gutter:-1,prompt:#5ac8ff,pointer:#ff5eed,marker:#5effc3,spinner:#5ac8ff,hl:#5c78ff,hl+:#5ac8ff,info:#7e7e7e,border:#2f2f2f,preview-border:#2f2f2f'
 export SYSTEMCMD_FZF_SKIP_DIRS='.git,node_modules,dist,build,target,.venv,venv,__pycache__,.next,.nuxt,.cache,bin,obj,vendor,coverage,out,release,debug,.pytest_cache,.mypy_cache,.tox'
+SYSTEMCMD_SCRIPT_DIR="$(CDPATH='' cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+
+if [[ -f "${SYSTEMCMD_HOME}/systemcmd-theme.generated.sh" ]]; then
+  # shellcheck disable=SC1090
+  . "${SYSTEMCMD_HOME}/systemcmd-theme.generated.sh"
+elif [[ -f "${SYSTEMCMD_SCRIPT_DIR}/systemcmd-theme.generated.sh" ]]; then
+  # shellcheck disable=SC1091
+  . "${SYSTEMCMD_SCRIPT_DIR}/systemcmd-theme.generated.sh"
+else
+  export SYSTEMCMD_FZF_COLOR='fg:#d1d1d1,fg+:#5effc3,bg:-1,bg+:-1,gutter:-1,prompt:#5ac8ff,pointer:#ff5eed,marker:#5effc3,spinner:#5ac8ff,hl:#5c78ff,hl+:#5ac8ff,info:#7e7e7e,border:#2f2f2f,preview-border:#2f2f2f'
+fi
 
 mkdir -p "${SYSTEMCMD_HOME}"
 
@@ -372,17 +382,185 @@ systemcmd_toggle_favorite() {
   systemcmd_save_favorites "${updated[@]}"
 }
 
-system() {
+systemcmd_fallback_help() {
   cat <<'EOF'
 systemcmd
 
-  Ctrl+f : hizli dosya secici
-  Ctrl+r : favorili gecmis aramasi
-  ll     : gizli dosyalarla listele
+  systemcmd             : ana menuyu acar
+  systemcmd doctor      : kurulum ve arac sagligini kontrol eder
+  systemcmd theme build : tema dosyalarini yeniden uretir
+  Ctrl+f                : hizli dosya secici
+  Ctrl+r                : favorili gecmis aramasi, F ile yildizla
+  ll                    : gizli dosyalarla listele
 EOF
 }
 
-alias systemcmd='system'
+systemcmd_doctor_line() {
+  local label="$1"
+  local healthy="$2"
+  local detail="$3"
+
+  if [[ "${healthy}" == '1' ]]; then
+    printf '\033[32mOK  \033[0m %-16s %s\n' "${label}" "${detail}"
+  else
+    printf '\033[33mWARN\033[0m %-16s %s\n' "${label}" "${detail}"
+  fi
+}
+
+systemcmd_doctor() {
+  local ok_count=0
+  local warn_count=0
+  local nvim_config="${HOME}/.config/nvim/init.lua"
+  local bashrc_config="${HOME}/.config/systemcmd/systemcmd.bashrc"
+  local theme_runtime="${HOME}/.config/systemcmd/systemcmd-theme.generated.sh"
+
+  printf '\nsystemcmd doctor\n\n'
+
+  if command -v fzf >/dev/null 2>&1; then
+    systemcmd_doctor_line 'fzf' '1' "$(command -v fzf)"
+    ((ok_count++))
+  else
+    systemcmd_doctor_line 'fzf' '0' 'Bulunamadi'
+    ((warn_count++))
+  fi
+
+  if command -v bat >/dev/null 2>&1; then
+    systemcmd_doctor_line 'bat' '1' "$(command -v bat)"
+    ((ok_count++))
+  elif command -v batcat >/dev/null 2>&1; then
+    systemcmd_doctor_line 'bat' '1' "$(command -v batcat)"
+    ((ok_count++))
+  else
+    systemcmd_doctor_line 'bat' '0' 'Bulunamadi'
+    ((warn_count++))
+  fi
+
+  if command -v nvim >/dev/null 2>&1; then
+    systemcmd_doctor_line 'Neovim' '1' "$(command -v nvim)"
+    ((ok_count++))
+  else
+    systemcmd_doctor_line 'Neovim' '0' 'Bulunamadi'
+    ((warn_count++))
+  fi
+
+  if [[ -f "${bashrc_config}" ]]; then
+    systemcmd_doctor_line 'bashrc profile' '1' "${bashrc_config}"
+    ((ok_count++))
+  else
+    systemcmd_doctor_line 'bashrc profile' '0' "${bashrc_config}"
+    ((warn_count++))
+  fi
+
+  if [[ -f "${theme_runtime}" ]]; then
+    systemcmd_doctor_line 'theme runtime' '1' "${theme_runtime}"
+    ((ok_count++))
+  else
+    systemcmd_doctor_line 'theme runtime' '0' "${theme_runtime}"
+    ((warn_count++))
+  fi
+
+  if [[ -f "${nvim_config}" ]]; then
+    systemcmd_doctor_line 'Neovim config' '1' "${nvim_config}"
+    ((ok_count++))
+  else
+    systemcmd_doctor_line 'Neovim config' '0' "${nvim_config}"
+    ((warn_count++))
+  fi
+
+  if command -v xclip >/dev/null 2>&1 || command -v wl-copy >/dev/null 2>&1; then
+    systemcmd_doctor_line 'clipboard' '1' "$(command -v wl-copy 2>/dev/null || command -v xclip 2>/dev/null)"
+    ((ok_count++))
+  else
+    systemcmd_doctor_line 'clipboard' '0' 'xclip veya wl-clipboard yok'
+    ((warn_count++))
+  fi
+
+  printf '\nToplam: %s OK, %s WARN\n' "${ok_count}" "${warn_count}"
+}
+
+systemcmd_doctor_summary() {
+  local ok_count=0
+  local warn_count=0
+
+  command -v fzf >/dev/null 2>&1 && ((ok_count++)) || ((warn_count++))
+  (command -v bat >/dev/null 2>&1 || command -v batcat >/dev/null 2>&1) && ((ok_count++)) || ((warn_count++))
+  command -v nvim >/dev/null 2>&1 && ((ok_count++)) || ((warn_count++))
+  [[ -f "${HOME}/.config/systemcmd/systemcmd-theme.generated.sh" ]] && ((ok_count++)) || ((warn_count++))
+  [[ -f "${HOME}/.config/nvim/init.lua" ]] && ((ok_count++)) || ((warn_count++))
+
+  printf '%s\t%s\n' "${ok_count}" "${warn_count}"
+}
+
+systemcmd_has_theme_builder() {
+  command -v pwsh >/dev/null 2>&1 && [[ -f "${SYSTEMCMD_HOME}/theme/Build-SystemCmdTheme.ps1" ]]
+}
+
+systemcmd_menu() {
+  if ! command -v fzf >/dev/null 2>&1; then
+    systemcmd_fallback_help
+    return
+  fi
+
+  local selection action summary ok_count warn_count
+  local -a items
+  IFS=$'\t' read -r ok_count warn_count < <(systemcmd_doctor_summary)
+  summary="Enter: calistir | Esc: cik"$'\n'"Ctrl+f: dosya | Ctrl+r: history | doctor: ${ok_count} ok / ${warn_count} warn"
+  items=(
+$'core\tdoctor\tKurulum ve arac sagligini kontrol eder\t\033[38;5;36m[CORE]\033[0m \033[97mdoctor     \033[0m \033[38;5;245mKurulum ve arac sagligini kontrol eder\033[0m'
+$'tools\tports\tAcik portlari listeler\t\033[38;5;214m[TOOLS]\033[0m \033[97mports      \033[0m \033[38;5;245mAcik portlari listeler\033[0m'
+$'editor\tnvim\tNeovim acilir\t\033[38;5;45m[EDITOR]\033[0m \033[97mnvim       \033[0m \033[38;5;245mNeovim acilir\033[0m'
+$'shell\tll\tGizli dosyalarla listeleme yapar\t\033[38;5;39m[SHELL]\033[0m \033[97mll         \033[0m \033[38;5;245mGizli dosyalarla listeleme yapar\033[0m'
+  )
+
+  if systemcmd_has_theme_builder; then
+    items+=($'theme\ttheme build\tTek kaynak paletten tema dosyalarini uretir\t\033[38;5;171m[THEME]\033[0m \033[97mtheme build\033[0m \033[38;5;245mTek kaynak paletten tema dosyalarini uretir\033[0m')
+  fi
+
+  selection="$(
+    printf '%s\n' "${items[@]}" | fzf --layout reverse --border --delimiter $'\t' --with-nth 4 --nth 1,2,3,4 --prompt 'systemcmd > ' --header "${summary}" --ansi --color "${SYSTEMCMD_FZF_COLOR}"
+  )" || return
+
+  action="$(printf '%s\n' "${selection}" | awk -F '\t' '{print $2}')"
+
+  case "${action}" in
+    doctor) systemcmd_doctor ;;
+    ports) ss -tulpn 2>/dev/null || netstat -tulpn 2>/dev/null || printf 'Port araci bulunamadi.\n' ;;
+    nvim) command -v nvim >/dev/null 2>&1 && nvim || printf 'nvim bulunamadi.\n' ;;
+    'theme build') pwsh -NoLogo -NoProfile -File "${SYSTEMCMD_HOME}/theme/Build-SystemCmdTheme.ps1" ;;
+    ll) ll ;;
+  esac
+}
+
+systemcmd() {
+  local command="${1:-menu}"
+  local subcommand="${2:-}"
+  shift || true
+
+  case "${command}" in
+    help) systemcmd_menu ;;
+    doctor) systemcmd_doctor ;;
+    menu) systemcmd_menu ;;
+    theme)
+      case "${subcommand}" in
+        build)
+          if systemcmd_has_theme_builder; then
+            pwsh -NoLogo -NoProfile -File "${SYSTEMCMD_HOME}/theme/Build-SystemCmdTheme.ps1"
+          else
+            printf 'theme build script bulunamadi.\n'
+          fi
+          ;;
+        *)
+          printf 'Kullanim: systemcmd theme build\n'
+          ;;
+      esac
+      ;;
+    *)
+      systemcmd_menu
+      ;;
+  esac
+}
+
+alias system='systemcmd'
 
 systemcmd_file_widget() {
   if ! command -v fzf >/dev/null 2>&1; then

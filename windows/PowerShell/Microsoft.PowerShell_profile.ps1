@@ -85,6 +85,11 @@ $script:SystemCmdIsLinux = -not $script:SystemCmdIsWindows
 $script:SystemCmdHistoryEntriesCache = $null
 $script:SystemCmdHistoryFavoritesCache = $null
 
+$systemCmdThemeRuntimePath = Join-Path $script:SystemCmdRoot 'systemcmd-theme.generated.ps1'
+if (Test-Path -LiteralPath $systemCmdThemeRuntimePath) {
+    . $systemCmdThemeRuntimePath
+}
+
 $moduleRoots = @(
     (Join-Path $script:SystemCmdRoot 'Modules'),
     (Join-Path (Split-Path $script:SystemCmdRoot -Parent) 'Modules')
@@ -189,6 +194,10 @@ function Get-SystemCmdFzfFilePreviewCommand {
 }
 
 function Get-SystemCmdFzfColorOption {
+    if ($script:SystemCmdTheme -and $script:SystemCmdTheme.FzfColor) {
+        return $script:SystemCmdTheme.FzfColor
+    }
+
     return 'fg:#d1d1d1,fg+:#5effc3,bg:-1,bg+:-1,gutter:-1,prompt:#5ac8ff,pointer:#ff5eed,marker:#5effc3,spinner:#5ac8ff,hl:#5c78ff,hl+:#5ac8ff,info:#7e7e7e,border:#2f2f2f,preview-border:#2f2f2f'
 }
 
@@ -1120,10 +1129,6 @@ if ($psReadLineLoaded) {
 }
 
 if ($script:SystemCmdIsWindows) {
-    function /system32 {
-        Set-Location (Join-Path $env:SystemRoot 'System32')
-    }
-
     $windowsScriptImports = @(
         'nmphcmfs\Nmap.ps1',
         'nmphcmfs\Hashcat.ps1',
@@ -1159,6 +1164,16 @@ if ($script:SystemCmdIsWindows) {
     }
 }
 
+$systemCmdToolsPath = Join-Path $script:SystemCmdRoot 'systemcmd-tools.ps1'
+if (Test-Path -LiteralPath $systemCmdToolsPath) {
+    . $systemCmdToolsPath
+}
+
+$systemCmdMenuPath = Join-Path $script:SystemCmdRoot 'systemcmd-menu.ps1'
+if (Test-Path -LiteralPath $systemCmdMenuPath) {
+    . $systemCmdMenuPath
+}
+
 function Type-Text {
     param(
         [string]$Text,
@@ -1174,109 +1189,34 @@ function Type-Text {
 }
 
 function Show-HelpMenu {
-    Write-Host "`e[1;94m╔═════════════════════════════════════════════════════════════╗`e[0m"
-    Write-Host "`e[1;94m║`e[0m         `e[1;95m✨ MEVCUT KOMUTLAR VE FONKSIYONLAR ✨`e[0m           `e[1;94m║`e[0m"
-    Write-Host "`e[1;94m╠═════════════════════════════════════════════════════════════╣`e[0m"
-    Write-Host ''
-
-    $robots = @(
-@"
-`e[90m    ________   `e[0m
-`e[90m   /        \  `e[0m
-`e[90m  | `e[96m[]    [] `e[90m| `e[0m
-`e[90m  | `e[93m  \____/  `e[90m| `e[0m
-`e[90m   \________/  `e[0m
-"@,
-@"
-`e[90m   .--------.  `e[0m
-`e[90m  /   `e[96m0  0  `e[90m\ `e[0m
-`e[90m |     __    | `e[0m
-`e[90m |    /__\   | `e[0m
-`e[90m  \__________/ `e[0m
-"@,
-@"
-`e[90m    ________    `e[0m
-`e[90m   /        \   `e[0m
-`e[90m  |  `e[96m^    ^  `e[90m|  `e[0m
-`e[90m  | `e[93m  \____/   `e[90m|  `e[0m
-`e[90m   \___~~___/   `e[0m
-"@,
-@"
-`e[90m    ________    `e[0m
-`e[90m   /        \   `e[0m
-`e[90m  |  `e[96m><   >< `e[90m|  `e[0m
-`e[90m  | `e[93m  \____/   `e[90m|  `e[0m
-`e[90m   \________/   `e[0m
-"@
-    )
-
-    Write-Host "`e[92m[ OZEL TUS ATAMALARI ]`e[0m"
-    Write-Host "  `e[96m• Ctrl+d`e[0m   : Imlecin altindaki karakteri siler."
-    Write-Host "  `e[96m• Ctrl+f`e[0m   : Dosya aramasi, `/System32` gibi yol tokenini acabilir."
-    Write-Host "  `e[96m• Ctrl+r`e[0m   : Gecmis aramasi, sari favoriler ve sag favori paneli."
-    Write-Host ''
-
-    Write-Host "`e[92m[ ALIASLAR ]`e[0m"
-    Write-Host "  `e[93m• vim       `e[0m: nvim varsa onu acmak icin kisayol."
-    Write-Host "  `e[93m• wn        `e[0m: winget kisayolu (Windows)."
-    Write-Host "  `e[93m• sil / c   `e[0m: Ekrani temizler."
-    Write-Host "  `e[93m• ifconfig  `e[0m: ipconfig kisayolu (Windows)."
-    Write-Host "  `e[93m• st        `e[0m: Start-Process kisayolu."
-    Write-Host ''
-
-    Write-Host "`e[92m[ TEMEL FONKSIYONLAR ]`e[0m"
-    Write-Host "  `e[96m• ll [path]      `e[0m: Gizli dosyalar dahil klasor listeler."
-    Write-Host "  `e[96m• rmrf <path>    `e[0m: Klasor veya dosyayi zorla siler."
-    Write-Host "  `e[96m• which <komut>  `e[0m: Komutun gercek yolunu gosterir."
-    Write-Host "  `e[96m• Show-Ports     `e[0m: Acik portlari listeler."
-    Write-Host ''
-
-    if ($script:SystemCmdIsWindows) {
-        Write-Host "`e[92m[ WINDOWS MENULERI ]`e[0m"
-        $windowsMenuEntries = @(
-            @{ Name = 'dockerhelp'; Description = 'Docker notlari.' },
-            @{ Name = 'crypto'; Description = 'Kripto kaynak menusu.' },
-            @{ Name = 'pentestmenu'; Description = 'Pentest baglantilari.' },
-            @{ Name = 'blueteam'; Description = 'BlueTeam menusu.' },
-            @{ Name = 'redteam'; Description = 'RedTeam menusu.' },
-            @{ Name = 'nmp'; Description = 'Nmap komut menusu.' },
-            @{ Name = 'ctl'; Description = 'systemctl ve journalctl yardimi.' },
-            @{ Name = 'ncatmenu'; Description = 'Ncat komut menusu.' },
-            @{ Name = 'hc'; Description = 'Hashcat menusu.' },
-            @{ Name = 'msf'; Description = 'Metasploit menusu.' },
-            @{ Name = 'dork'; Description = 'Google dork menusu.' },
-            @{ Name = 'ascii'; Description = 'Metni ASCII koda cevirir.' },
-            @{ Name = 'sistemarac'; Description = 'Sag tik sistem araclari.' },
-            @{ Name = 'adminhck'; Description = 'Dosya sahipligini alir.' },
-            @{ Name = 'ip'; Description = 'IP bilgileri.' },
-            @{ Name = 'bios'; Description = 'BIOS bilgileri.' },
-            @{ Name = 'para'; Description = 'Finansal hesaplama.' }
-        )
-
-        foreach ($entry in $windowsMenuEntries) {
-            if (-not (Get-Command -Name $entry.Name -ErrorAction SilentlyContinue)) {
-                continue
-            }
-
-            Write-Host ("  `e[95m• {0,-11}`e[0m: {1}" -f $entry.Name, $entry.Description)
-        }
-        Write-Host ''
+    if (Get-Command -Name Show-SystemCmdTuiMenu -ErrorAction SilentlyContinue) {
+        Show-SystemCmdTuiMenu
+        return
     }
 
-    Write-Host ($robots | Get-Random)
-    Write-Host ''
-    Type-Text "`e[┌──(X_O㉿System)-[~/Cmd]"
-    Write-Host ''
+    if (Get-Command -Name Show-SystemCmdFallbackHelp -ErrorAction SilentlyContinue) {
+        Show-SystemCmdFallbackHelp
+    }
 }
 
 function SystemCmd {
     param(
-        [string]$Command = 'help'
+        [string]$Command = 'menu',
+        [string]$SubCommand = ''
     )
 
     switch ($Command.ToLowerInvariant()) {
-        'help' { Show-HelpMenu }
-        default { Show-HelpMenu }
+        '' { Show-SystemCmdTuiMenu }
+        'help' { Show-SystemCmdTuiMenu }
+        'doctor' { Show-SystemCmdDoctor }
+        'menu' { Show-SystemCmdTuiMenu }
+        'theme' {
+            switch ($SubCommand.ToLowerInvariant()) {
+                'build' { Invoke-SystemCmdThemeBuild }
+                default { Write-Host 'Kullanim: systemcmd theme build' -ForegroundColor Yellow }
+            }
+        }
+        default { Show-SystemCmdTuiMenu }
     }
 }
 
