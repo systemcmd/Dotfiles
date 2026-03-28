@@ -137,6 +137,29 @@ if (-not (Get-Module -ListAvailable -Name `$moduleName)) {
     }
 }
 
+function Ensure-ClaudeCLI {
+    $binDir = Join-Path $HOME '.local\bin'
+    $claudeExe = Join-Path $binDir 'claude.exe'
+
+    if ((Test-Path -LiteralPath $claudeExe) -or (Get-Command -Name claude -ErrorAction SilentlyContinue)) {
+        Write-Step 'Claude CLI zaten yuklu.'
+        return
+    }
+
+    if (-not (Get-Command -Name npm -ErrorAction SilentlyContinue)) {
+        Write-Warn 'npm bulunamadi. Claude CLI yuklenemedi. Node.js yukledikten sonra: npm install -g @anthropic-ai/claude-code'
+        return
+    }
+
+    Write-Step 'Claude CLI npm ile yukleniyor.'
+    try {
+        & npm install -g '@anthropic-ai/claude-code' 2>$null
+        Write-Step 'Claude CLI basariyla yuklendi.'
+    } catch {
+        Write-Warn "Claude CLI yuklenemedi: $($_.Exception.Message)"
+    }
+}
+
 function Ensure-ProfileBootstrap {
     param(
         [Parameter(Mandatory = $true)]
@@ -354,6 +377,7 @@ Ensure-WinGetPackage -Id 'Microsoft.PowerShell' -Name 'PowerShell 7'
 Ensure-WinGetPackage -Id 'junegunn.fzf' -Name 'fzf'
 Ensure-WinGetPackage -Id 'sharkdp.bat' -Name 'bat'
 Ensure-WinGetPackage -Id 'Neovim.Neovim' -Name 'Neovim'
+Ensure-ClaudeCLI
 
 $pwshPath = Resolve-PwshPath
 

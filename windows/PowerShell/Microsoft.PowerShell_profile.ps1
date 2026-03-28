@@ -90,6 +90,8 @@ if (Test-Path -LiteralPath $systemCmdThemeRuntimePath) {
     . $systemCmdThemeRuntimePath
 }
 
+Import-SystemCmdScript 'systemcmd-config.ps1'
+
 $moduleRoots = @(
     (Join-Path $script:SystemCmdRoot 'Modules'),
     (Join-Path (Split-Path $script:SystemCmdRoot -Parent) 'Modules')
@@ -111,6 +113,12 @@ Register-SystemCmdAlias -Name 'vim' -Target 'nvim'
 Register-SystemCmdAlias -Name 'tig' -Target 'C:\Program Files\Git\usr\bin\tig.exe' -WindowsOnly
 Register-SystemCmdAlias -Name 'less' -Target 'C:\Program Files\Git\usr\bin\less.exe' -WindowsOnly
 Register-SystemCmdAlias -Name 'csc' -Target 'C:\Windows\Microsoft.NET\Framework\v4.0.30319\csc.exe' -WindowsOnly
+
+if (Test-Path -LiteralPath "$HOME\.local\bin\claude.exe") {
+    function cloud { & "$HOME\.local\bin\claude.exe" @args }
+} elseif (Get-Command -Name claude -ErrorAction SilentlyContinue) {
+    function cloud { claude @args }
+}
 
 function ll {
     param(
@@ -138,6 +146,7 @@ function which {
     Get-Command -Name $Command -ErrorAction SilentlyContinue |
         Select-Object -ExpandProperty Path -ErrorAction SilentlyContinue
 }
+
 
 function Show-Ports {
     if ($script:SystemCmdIsWindows -and (Get-Command -Name Get-NetTCPConnection -ErrorAction SilentlyContinue)) {
@@ -1174,6 +1183,36 @@ if (Test-Path -LiteralPath $systemCmdMenuPath) {
     . $systemCmdMenuPath
 }
 
+$cloudHelpPath = Join-Path $script:SystemCmdRoot 'cloudhelp.ps1'
+if (Test-Path -LiteralPath $cloudHelpPath) {
+    . $cloudHelpPath
+}
+
+$systemCmdPromptPath = Join-Path $script:SystemCmdRoot 'systemcmd-prompt.ps1'
+if (Test-Path -LiteralPath $systemCmdPromptPath) {
+    . $systemCmdPromptPath
+}
+
+$__scExtraScripts = @(
+    'systemcmd-hack.ps1',
+    'systemcmd-welcome.ps1',
+    'systemcmd-git.ps1',
+    'systemcmd-ssh.ps1',
+    'systemcmd-env.ps1',
+    'systemcmd-ai.ps1',
+    'systemcmd-run.ps1',
+    'systemcmd-stats.ps1',
+    'systemcmd-dashboard.ps1',
+    'systemcmd-update.ps1'
+)
+foreach ($__scScript in $__scExtraScripts) {
+    $__scPath = Join-Path $script:SystemCmdRoot $__scScript
+    if (Test-Path -LiteralPath $__scPath) {
+        . $__scPath
+    }
+}
+Remove-Variable __scExtraScripts, __scScript, __scPath -ErrorAction SilentlyContinue
+
 function Type-Text {
     param(
         [string]$Text,
@@ -1206,10 +1245,21 @@ function SystemCmd {
     )
 
     switch ($Command.ToLowerInvariant()) {
-        '' { Show-SystemCmdTuiMenu }
-        'help' { Show-SystemCmdTuiMenu }
-        'doctor' { Show-SystemCmdDoctor }
-        'menu' { Show-SystemCmdTuiMenu }
+        ''          { Show-SystemCmdTuiMenu }
+        'help'      { Show-SystemCmdTuiMenu }
+        'doctor'    { Show-SystemCmdDoctor }
+        'menu'      { Show-SystemCmdTuiMenu }
+        'version'   { Show-SystemCmdVersion }
+        'update'    { Update-SystemCmd }
+        'config'    {
+            switch ($SubCommand.ToLowerInvariant()) {
+                'show'  { Show-SystemCmdConfig }
+                default { Show-SystemCmdConfig }
+            }
+        }
+        'dashboard' { Invoke-SystemCmdDashboard }
+        'stats'     { Show-SystemCmdStats }
+        'perf'      { Measure-SystemCmdLoadTime }
         'theme' {
             switch ($SubCommand.ToLowerInvariant()) {
                 'build' { Invoke-SystemCmdThemeBuild }
@@ -1221,3 +1271,7 @@ function SystemCmd {
 }
 
 Set-Alias -Name 'system' -Value 'SystemCmd' -Option AllScope -Scope Global -Force
+
+if (Get-Command -Name Show-SystemCmdWelcome -ErrorAction SilentlyContinue) {
+    Show-SystemCmdWelcome
+}

@@ -39,6 +39,7 @@ function Get-SystemCmdMenuSectionOrder {
         Editor   = 6
         Theme    = 7
         Windows  = 8
+        Hacking  = 9
     }
 }
 
@@ -58,6 +59,7 @@ function Get-SystemCmdMenuSectionColor {
         'Editor' { return '45' }
         'Theme' { return '171' }
         'Windows' { return '75' }
+        'Hacking' { return '196' }
         default { return '245' }
     }
 }
@@ -78,7 +80,29 @@ function Get-SystemCmdMenuSectionConsoleColor {
         'Editor' { return 'Cyan' }
         'Theme' { return 'DarkMagenta' }
         'Windows' { return 'Blue' }
+        'Hacking' { return 'Red' }
         default { return 'Gray' }
+    }
+}
+
+function Get-SystemCmdMenuSectionIcon {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Section
+    )
+
+    switch ($Section) {
+        'Main'     { return [char]0x25C6 }   # ◆
+        'Search'   { return [char]0x2726 }   # ✦
+        'Files'    { return [char]0x25A3 }   # ▣
+        'Network'  { return [char]0x25C9 }   # ◉
+        'Hardware' { return [char]0x2B21 }   # ⬡
+        'Alias'    { return [char]0x2261 }   # ≡
+        'Editor'   { return [char]0x25C7 }   # ◇
+        'Theme'    { return [char]0x25C8 }   # ◈
+        'Windows'  { return [char]0x229E }   # ⊞
+        'Hacking'  { return [char]0x25CE }   # ◎
+        default    { return [char]0x00B7 }   # ·
     }
 }
 
@@ -125,6 +149,7 @@ function Get-SystemCmdMenuEntries {
 
     $entries.Add((New-SystemCmdMenuEntry -Section 'Main' -Label 'systemcmd' -Usage 'systemcmd' -Description 'Bolmeli komut menusunu acar.' -Example 'systemcmd'))
     $entries.Add((New-SystemCmdMenuEntry -Section 'Main' -Label 'doctor' -Usage 'systemcmd doctor' -Description 'Kurulum, tema ve arac sagligini kontrol eder.' -ActionKey 'doctor' -Example 'systemcmd doctor'))
+    $entries.Add((New-SystemCmdMenuEntry -Section 'Main' -Label 'cloudhelp' -Usage 'cloudhelp' -Description '✶ Claude Code icin interaktif Turkce referans menusu acar.' -ActionKey 'command:cloudhelp' -Example 'cloudhelp'))
 
     $entries.Add((New-SystemCmdMenuEntry -Section 'Search' -Label 'Ctrl+f' -Usage 'Ctrl+f' -Description 'Hizli dosya seciciyi acar ve secilen yolu satira yazar.' -Example 'Bir yol yazip Ctrl+f' -Note 'Bir klasor yolu yaziliysa o klasorun icini listeler.'))
     $entries.Add((New-SystemCmdMenuEntry -Section 'Search' -Label 'Ctrl+r' -Usage 'Ctrl+r' -Description 'Favorili gecmis aramasini acar.' -Example 'Ctrl+r -> F -> Enter' -Note 'F: favori ac/kapat.'))
@@ -159,12 +184,12 @@ function Get-SystemCmdMenuEntries {
         Add-SystemCmdMenuEntryIfCommandExists -Entries $entries -CommandName 'csc' -Section 'Alias' -Label 'csc' -Usage 'csc <args>' -Description '.NET Framework C# derleyicisini calistirir.' -ActionKey 'info' -Example 'csc Program.cs'
 
         $hardwareEntries = @(
-            @{ CommandName = 'Ram'; Label = 'Ram'; Usage = 'Ram'; Description = 'RAM kullanimini ve en cok bellek kullanan surecleri gosterir.'; Example = 'Ram'; Note = '' },
-            @{ CommandName = 'CPU'; Label = 'CPU'; Usage = 'CPU'; Description = 'CPU kullanimini, uptime bilgisini ve agir surecleri gosterir.'; Example = 'CPU'; Note = '' },
-            @{ CommandName = 'GPU'; Label = 'GPU'; Usage = 'GPU'; Description = 'GPU kullanimini ve bellek ozetini gosterir.'; Example = 'GPU'; Note = 'Detayli bilgi icin nvidia-smi gerekir.' },
-            @{ CommandName = 'Disk'; Label = 'Disk'; Usage = 'Disk'; Description = 'Disklerin doluluk ve kullanilabilir alan durumunu gosterir.'; Example = 'Disk'; Note = '' },
-            @{ CommandName = 'Pil'; Label = 'Pil'; Usage = 'Pil'; Description = 'Pil yuzdesi, kalan sure ve durum bilgisini gosterir.'; Example = 'Pil'; Note = 'Genelde laptoplarda anlamlidir.' },
-            @{ CommandName = 'bios'; Label = 'bios'; Usage = 'bios'; Description = 'BIOS ve temel donanim bilgilerini gosterir.'; Example = 'bios'; Note = '' }
+            @{ CommandName = 'Ram';  Label = 'Ram';  Usage = 'Ram';  Description = '🧠 RAM kullanimini ve en cok bellek kullanan surecleri gosterir.'; Example = 'Ram';  Note = '' },
+            @{ CommandName = 'CPU';  Label = 'CPU';  Usage = 'CPU';  Description = '⚡ CPU kullanimini, uptime bilgisini ve agir surecleri gosterir.'; Example = 'CPU';  Note = '' },
+            @{ CommandName = 'GPU';  Label = 'GPU';  Usage = 'GPU';  Description = '🎮 GPU kullanimini ve bellek ozetini gosterir.'; Example = 'GPU';  Note = 'Detayli bilgi icin nvidia-smi gerekir.' },
+            @{ CommandName = 'Disk'; Label = 'Disk'; Usage = 'Disk'; Description = '💾 Disklerin doluluk ve kullanilabilir alan durumunu gosterir.'; Example = 'Disk'; Note = '' },
+            @{ CommandName = 'Pil';  Label = 'Pil';  Usage = 'Pil';  Description = '🔋 Pil yuzdesi, kalan sure ve sarj durumunu gosterir.'; Example = 'Pil';  Note = 'Genelde laptoplarda anlamlidir.' },
+            @{ CommandName = 'bios'; Label = 'bios'; Usage = 'bios'; Description = '⚙️ BIOS surumu ve temel donanim bilgilerini gosterir.'; Example = 'bios'; Note = '' }
         )
 
         foreach ($entry in $hardwareEntries) {
@@ -172,7 +197,7 @@ function Get-SystemCmdMenuEntries {
         }
 
         $windowsEntries = @(
-            @{ Label = 'dockerhelp'; Usage = 'dockerhelp'; Description = 'Docker komut notlarini gosterir.'; Example = 'dockerhelp'; Note = '' },
+            @{ Label = 'dockerhelp'; Usage = 'dockerhelp'; Description = 'Docker interaktif referans — konteyner, imaj, compose, ag, volume.'; Example = 'dockerhelp'; Note = '' },
             @{ Label = 'crypto'; Usage = 'crypto'; Description = 'Kripto kaynak menusunu acir.'; Example = 'crypto'; Note = '' },
             @{ Label = 'pentestmenu'; Usage = 'pentestmenu'; Description = 'Pentest baglantilarini gosterir.'; Example = 'pentestmenu'; Note = '' },
             @{ Label = 'blueteam'; Usage = 'blueteam'; Description = 'BlueTeam notlarini acir.'; Example = 'blueteam'; Note = '' },
@@ -193,6 +218,12 @@ function Get-SystemCmdMenuEntries {
             Add-SystemCmdMenuEntryIfCommandExists -Entries $entries -CommandName $entry.Label -Section 'Windows' -Label $entry.Label -Usage $entry.Usage -Description $entry.Description -Example $entry.Example -Note $entry.Note
         }
     }
+
+    Add-SystemCmdMenuEntryIfCommandExists -Entries $entries -CommandName 'Show-20Hack' `
+        -Section 'Hacking' -Label '20hack' -Usage 'hack' `
+        -Description '20 hacking teknigi — kesi, web, parola, exploit, ag interaktif referans.' `
+        -ActionKey 'command:Show-20Hack' `
+        -Example 'hack'
 
     $sectionOrder = Get-SystemCmdMenuSectionOrder
     return $entries.ToArray() | Sort-Object @{ Expression = { $sectionOrder[$_.Section] } }, Usage
@@ -265,7 +296,8 @@ function Show-SystemCmdFallbackHelp {
 
     foreach ($group in $groups) {
         $sectionColor = Get-SystemCmdMenuSectionConsoleColor -Section $group.Name
-        Write-Host ('[{0}] {1} komut' -f $group.Name.ToUpperInvariant(), $group.Count) -ForegroundColor $sectionColor
+        $sectionIcon  = Get-SystemCmdMenuSectionIcon -Section $group.Name
+        Write-Host ('{0} {1}  {2} komut' -f $sectionIcon, $group.Name, $group.Count) -ForegroundColor $sectionColor
         Write-Host (($headerFormat) -f 'KULLANIM', 'NE YAPAR') -ForegroundColor DarkGray
 
         foreach ($entry in $group.Group | Sort-Object Usage) {
@@ -296,14 +328,16 @@ function Show-SystemCmdTuiMenu {
 
     $summary = Get-SystemCmdDoctorSummary
     $usageWidth = [Math]::Max((($entries | ForEach-Object { $_.Usage.Length } | Measure-Object -Maximum).Maximum), 18)
-    $sectionWidth = [Math]::Max((($entries | ForEach-Object { $_.Section.Length } | Measure-Object -Maximum).Maximum), 8)
     $sectionOrder = Get-SystemCmdMenuSectionOrder
     $sectionSummary = (
         $entries |
             Group-Object Section |
             Sort-Object { $sectionOrder[$_.Name] } |
-            ForEach-Object { '{0}:{1}' -f $_.Name.ToUpperInvariant(), $_.Count }
-    ) -join ' | '
+            ForEach-Object {
+                $ic = Get-SystemCmdMenuSectionIcon -Section $_.Name
+                '{0} {1}:{2}' -f $ic, $_.Name, $_.Count
+            }
+    ) -join '  '
 
     $headerLines = @(
         'Tum komutlar burada. Yazmaya basla ve filtrele.',
@@ -315,10 +349,11 @@ function Show-SystemCmdTuiMenu {
     $items = for ($index = 0; $index -lt $entries.Count; $index++) {
         $entry = $entries[$index]
         $sectionColor = Get-SystemCmdMenuSectionColor -Section $entry.Section
+        $sectionIcon  = Get-SystemCmdMenuSectionIcon -Section $entry.Section
         $display = (
-            "`e[38;5;{0}m[{1}]`e[0m `e[97m{2,-$usageWidth}`e[0m `e[38;5;245m{3}`e[0m" -f
+            "`e[38;5;{0}m{1}`e[0m  `e[97m{2,-$usageWidth}`e[0m `e[38;5;245m{3}`e[0m" -f
             $sectionColor,
-            $entry.Section.ToUpperInvariant().PadRight($sectionWidth),
+            $sectionIcon,
             $entry.Usage,
             $entry.Description
         )
@@ -339,7 +374,6 @@ function Show-SystemCmdTuiMenu {
     $selection = $items | & fzf `
         --delimiter "`t" `
         --with-nth 6 `
-        --nth 2,3,4,5,6 `
         --prompt 'systemcmd > ' `
         --header $headerText `
         --layout reverse `
