@@ -57,112 +57,112 @@
   },
   "tokenColors": [
     {
+      "name": "Comments",
+      "settings": {
+        "foreground": "#6f7480",
+        "fontStyle": "italic"
+      },
       "scope": [
         "comment",
         "punctuation.definition.comment"
-      ],
-      "name": "Comments",
-      "settings": {
-        "fontStyle": "italic",
-        "foreground": "#6f7480"
-      }
+      ]
     },
     {
+      "name": "Keywords",
+      "settings": {
+        "foreground": "#ff5eed"
+      },
       "scope": [
         "keyword",
         "storage",
         "storage.type"
-      ],
-      "name": "Keywords",
-      "settings": {
-        "foreground": "#ff5eed"
-      }
+      ]
     },
     {
+      "name": "Strings",
+      "settings": {
+        "foreground": "#ba5aff"
+      },
       "scope": [
         "string",
         "string.quoted",
         "punctuation.definition.string"
-      ],
-      "name": "Strings",
-      "settings": {
-        "foreground": "#ba5aff"
-      }
+      ]
     },
     {
+      "name": "Numbers and Constants",
+      "settings": {
+        "foreground": "#5effc3"
+      },
       "scope": [
         "constant.numeric",
         "constant.language",
         "constant.character"
-      ],
-      "name": "Numbers and Constants",
-      "settings": {
-        "foreground": "#5effc3"
-      }
+      ]
     },
     {
+      "name": "Functions",
+      "settings": {
+        "foreground": "#5ac8ff"
+      },
       "scope": [
         "entity.name.function",
         "support.function",
         "meta.function-call",
         "variable.function"
-      ],
-      "name": "Functions",
-      "settings": {
-        "foreground": "#5ac8ff"
-      }
+      ]
     },
     {
+      "name": "Types",
+      "settings": {
+        "foreground": "#d1d1d1"
+      },
       "scope": [
         "entity.name.type",
         "support.type",
         "storage.type"
-      ],
-      "name": "Types",
-      "settings": {
-        "foreground": "#d1d1d1"
-      }
+      ]
     },
     {
+      "name": "Variables",
+      "settings": {
+        "foreground": "#5c78ff"
+      },
       "scope": [
         "variable",
         "variable.other.readwrite",
         "meta.definition.variable"
-      ],
-      "name": "Variables",
-      "settings": {
-        "foreground": "#5c78ff"
-      }
+      ]
     },
     {
-      "scope": [
-        "variable.parameter"
-      ],
       "name": "Parameters",
       "settings": {
         "foreground": "#d1d1d1"
-      }
+      },
+      "scope": [
+        "variable.parameter"
+      ]
     },
     {
+      "name": "Punctuation",
+      "settings": {
+        "foreground": "#d1d1d1"
+      },
       "scope": [
         "punctuation",
         "meta.brace",
         "meta.delimiter"
-      ],
-      "name": "Punctuation",
-      "settings": {
-        "foreground": "#d1d1d1"
-      }
+      ]
     },
     {
-      "scope": [
-        "invalid",
-        "invalid.illegal"
-      ],
       "name": "Invalid",
       "settings": {
         "foreground": "#d35454"
-      }
+      },
+      "scope": [
+        "invalid",
+        "invalid.illegal"
+      ]
     }
   ]
 }
