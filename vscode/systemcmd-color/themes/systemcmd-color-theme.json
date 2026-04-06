@@ -57,18 +57,17 @@
   },
   "tokenColors": [
     {
-      "name": "Comments",
       "settings": {
-        "foreground": "#6f7480",
-        "fontStyle": "italic"
+        "fontStyle": "italic",
+        "foreground": "#6f7480"
       },
       "scope": [
         "comment",
         "punctuation.definition.comment"
-      ]
+      ],
+      "name": "Comments"
     },
     {
-      "name": "Keywords",
       "settings": {
         "foreground": "#ff5eed"
       },
@@ -76,10 +75,10 @@
         "keyword",
         "storage",
         "storage.type"
-      ]
+      ],
+      "name": "Keywords"
     },
     {
-      "name": "Strings",
       "settings": {
         "foreground": "#ba5aff"
       },
@@ -87,10 +86,10 @@
         "string",
         "string.quoted",
         "punctuation.definition.string"
-      ]
+      ],
+      "name": "Strings"
     },
     {
-      "name": "Numbers and Constants",
       "settings": {
         "foreground": "#5effc3"
       },
@@ -98,10 +97,10 @@
         "constant.numeric",
         "constant.language",
         "constant.character"
-      ]
+      ],
+      "name": "Numbers and Constants"
     },
     {
-      "name": "Functions",
       "settings": {
         "foreground": "#5ac8ff"
       },
@@ -110,10 +109,10 @@
         "support.function",
         "meta.function-call",
         "variable.function"
-      ]
+      ],
+      "name": "Functions"
     },
     {
-      "name": "Types",
       "settings": {
         "foreground": "#d1d1d1"
       },
@@ -121,10 +120,10 @@
         "entity.name.type",
         "support.type",
         "storage.type"
-      ]
+      ],
+      "name": "Types"
     },
     {
-      "name": "Variables",
       "settings": {
         "foreground": "#5c78ff"
       },
@@ -132,19 +131,19 @@
         "variable",
         "variable.other.readwrite",
         "meta.definition.variable"
-      ]
+      ],
+      "name": "Variables"
     },
     {
-      "name": "Parameters",
       "settings": {
         "foreground": "#d1d1d1"
       },
       "scope": [
         "variable.parameter"
-      ]
+      ],
+      "name": "Parameters"
     },
     {
-      "name": "Punctuation",
       "settings": {
         "foreground": "#d1d1d1"
       },
@@ -152,17 +151,18 @@
         "punctuation",
         "meta.brace",
         "meta.delimiter"
-      ]
+      ],
+      "name": "Punctuation"
     },
     {
-      "name": "Invalid",
       "settings": {
         "foreground": "#d35454"
       },
       "scope": [
         "invalid",
         "invalid.illegal"
-      ]
+      ],
+      "name": "Invalid"
     }
   ]
 }
