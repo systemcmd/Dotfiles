@@ -62,6 +62,73 @@ ensure_sudo_prefix() {
   printf '%s\n' ""
 }
 
+prompt_yes_no() {
+  # $1 = soru metni  ->  0 = evet, 1 = hayir
+  local question="$1" answer="" tty_in="/dev/tty"
+
+  # Etkilesimli olmayan ortam (curl | bash, CI vb.): terminal yoksa varsayilan hayir.
+  # SYSTEMCMD_INSTALL_CLAUDE=1 ile soru sormadan onaylanabilir.
+  if [[ "${SYSTEMCMD_INSTALL_CLAUDE:-}" == "1" ]]; then
+    return 0
+  fi
+  if [[ ! -r /dev/tty ]]; then
+    if [[ -t 0 ]]; then
+      tty_in="/dev/stdin"
+    else
+      return 1
+    fi
+  fi
+
+  while true; do
+    printf '[systemcmd] %s [e/h] ' "${question}" > /dev/tty 2>/dev/null \
+      || printf '[systemcmd] %s [e/h] ' "${question}"
+    if ! read -r answer < "${tty_in}"; then
+      return 1
+    fi
+    case "${answer}" in
+      [eEyY]*) return 0 ;;
+      [hHnN]*|'') return 1 ;;
+      *) printf '[systemcmd] Lutfen e (evet) ya da h (hayir) girin.\n' > /dev/tty 2>/dev/null || true ;;
+    esac
+  done
+}
+
+install_claude_code() {
+  if command -v claude >/dev/null 2>&1; then
+    log "Claude Code zaten kurulu, atlaniyor."
+    return
+  fi
+
+  if ! prompt_yes_no "Claude Code (Claude CLI) da kurulsun mu?"; then
+    log "Claude Code kurulumu atlandi."
+    return
+  fi
+
+  log "Claude Code kuruluyor."
+
+  # 1) Resmi yukleyici
+  if command -v curl >/dev/null 2>&1; then
+    if curl -fsSL https://claude.ai/install.sh | bash; then
+      log "Claude Code kuruldu."
+      return
+    fi
+    warn "Resmi yukleyici basarisiz oldu, npm denenecek."
+  fi
+
+  # 2) npm yedek yolu
+  if command -v npm >/dev/null 2>&1; then
+    local sudo_cmd
+    sudo_cmd="$(ensure_sudo_prefix)"
+    if ${sudo_cmd} npm install -g @anthropic-ai/claude-code; then
+      log "Claude Code npm ile kuruldu."
+      return
+    fi
+    warn "npm ile kurulum basarisiz oldu."
+  fi
+
+  warn "Claude Code kurulamadi. Manuel kurulum: curl -fsSL https://claude.ai/install.sh | bash"
+}
+
 install_packages() {
   local sudo_cmd
   sudo_cmd="$(ensure_sudo_prefix)"
@@ -230,6 +297,7 @@ main() {
   install_systemcmd_profile "${source_dir}"
   install_vscode_theme "${source_dir}"
   install_neovim_config "${source_dir}"
+  install_claude_code
 
   log "Kurulum tamamlandi."
   log "Yeni bir terminal acip 'system' komutunu kullanabilirsiniz."
