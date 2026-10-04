@@ -1,0 +1,28 @@
+name: CI
+on: [push, pull_request]
+
+jobs:
+  core:
+    name: SystemCmd core (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Parse PowerShell sources
+        shell: pwsh
+        run: |
+          $errors = Get-ChildItem -Recurse -File -Include *.ps1,*.psm1,*.psd1 | ForEach-Object {
+            $tokens = $null; $parseErrors = $null
+            [void][System.Management.Automation.Language.Parser]::ParseFile($_.FullName, [ref]$tokens, [ref]$parseErrors)
+            $parseErrors
+          }
+          if ($errors) { $errors | Format-List | Out-String | Write-Error; exit 1 }
+      - name: Run portable core tests
+        shell: pwsh
+        run: |
+          Set-PSRepository PSGallery -InstallationPolicy Trusted
+          Install-Module Pester -Force -Scope CurrentUser -MinimumVersion 5.0
+          Invoke-Pester ./tests -CI

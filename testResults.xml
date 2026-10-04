@@ -1,0 +1,221 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<test-results xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="nunit_schema_2.5.xsd" name="Pester" total="41" errors="0" failures="23" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2026-09-20" time="15:55:13">
+  <environment user-domain="DESKTOP-ONPJU13" user="kod" cwd="C:\Users\kod\Documents\PowerShell\Dotfiles" nunit-version="2.5.8.0" machine-name="DESKTOP-ONPJU13" os-version="10.0.26200" clr-version="10.0.2" platform="Microsoft Windows 11 Home Single Language|C:\WINDOWS|\Device\Harddisk0\Partition3" />
+  <culture-info current-culture="tr-TR" current-uiculture="tr-TR" />
+  <test-suite type="TestFixture" name="Pester" executed="True" result="Failure" success="False" time="2.7875" asserts="0" description="Pester">
+    <results>
+      <test-suite type="TestFixture" name="C:\Users\kod\Documents\PowerShell\Dotfiles\tests\Live.Tests.ps1" executed="True" result="Failure" success="False" time="0.2176" asserts="0" description="C:\Users\kod\Documents\PowerShell\Dotfiles\tests\Live.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Live transport and lifecycle" executed="True" result="Failure" success="False" time="0" asserts="0" description="Live transport and lifecycle">
+            <results>
+              <test-case description="falls back for redirected output even with inherited WT environment" name="Live transport and lifecycle.falls back for redirected output even with inherited WT environment" time="0" asserts="0" success="False" result="Failure" executed="True">
+                <failure>
+                  <message>This test should run but it did not. Most likely a setup in some parent block failed.</message>
+                  <stack-trace />
+                </failure>
+              </test-case>
+              <test-case description="prevents recursive pane creation" name="Live transport and lifecycle.prevents recursive pane creation" time="0" asserts="0" success="False" result="Failure" executed="True">
+                <failure>
+                  <message>This test should run but it did not. Most likely a setup in some parent block failed.</message>
+                  <stack-trace />
+                </failure>
+              </test-case>
+              <test-case description="publishes and reads atomic state with identity and monotonic revisions" name="Live transport and lifecycle.publishes and reads atomic state with identity and monotonic revisions" time="0" asserts="0" success="False" result="Failure" executed="True">
+                <failure>
+                  <message>This test should run but it did not. Most likely a setup in some parent block failed.</message>
+                  <stack-trace />
+                </failure>
+              </test-case>
+              <test-case description="reuses one session and closes repeatedly without stale files" name="Live transport and lifecycle.reuses one session and closes repeatedly without stale files" time="0" asserts="0" success="False" result="Failure" executed="True">
+                <failure>
+                  <message>This test should run but it did not. Most likely a setup in some parent block failed.</message>
+                  <stack-trace />
+                </failure>
+              </test-case>
+              <test-case description="does not accept PID reuse as a live owner" name="Live transport and lifecycle.does not accept PID reuse as a live owner" time="0" asserts="0" success="False" result="Failure" executed="True">
+                <failure>
+                  <message>This test should run but it did not. Most likely a setup in some parent block failed.</message>
+                  <stack-trace />
+                </failure>
+              </test-case>
+              <test-case description="removes dead-owner state and preserves active sessions" name="Live transport and lifecycle.removes dead-owner state and preserves active sessions" time="0" asserts="0" success="False" result="Failure" executed="True">
+                <failure>
+                  <message>This test should run but it did not. Most likely a setup in some parent block failed.</message>
+                  <stack-trace />
+                </failure>
+              </test-case>
+              <test-case description="rejects cleanup outside a session directory" name="Live transport and lifecycle.rejects cleanup outside a session directory" time="0" asserts="0" success="False" result="Failure" executed="True">
+                <failure>
+                  <message>This test should run but it did not. Most likely a setup in some parent block failed.</message>
+                  <stack-trace />
+                </failure>
+              </test-case>
+              <test-case description="tolerates incomplete or corrupt state" name="Live transport and lifecycle.tolerates incomplete or corrupt state" time="0" asserts="0" success="False" result="Failure" executed="True">
+                <failure>
+                  <message>This test should run but it did not. Most likely a setup in some parent block failed.</message>
+                  <stack-trace />
+                </failure>
+              </test-case>
+              <test-case description="renders every shared mode without StrictMode failures" name="Live transport and lifecycle.renders every shared mode without StrictMode failures" time="0" asserts="0" success="False" result="Failure" executed="True">
+                <failure>
+                  <message>This test should run but it did not. Most likely a setup in some parent block failed.</message>
+                  <stack-trace />
+                </failure>
+              </test-case>
+              <test-case description="renderer acknowledges, reads updates, and exits after transport closes" name="Live transport and lifecycle.renderer acknowledges, reads updates, and exits after transport closes" time="0" asserts="0" success="False" result="Failure" executed="True">
+                <failure>
+                  <message>This test should run but it did not. Most likely a setup in some parent block failed.</message>
+                  <stack-trace />
+                </failure>
+              </test-case>
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="Real Git selection and action previews" executed="True" result="Failure" success="False" time="0" asserts="0" description="Real Git selection and action previews">
+            <results>
+              <test-case description="changes selection without changing session identity" name="Real Git selection and action previews.changes selection without changing session identity" time="0" asserts="0" success="False" result="Failure" executed="True">
+                <failure>
+                  <message>This test should run but it did not. Most likely a setup in some parent block failed.</message>
+                  <stack-trace />
+                </failure>
+              </test-case>
+              <test-case description="refreshes stage, unstage and discard from real Git state" name="Real Git selection and action previews.refreshes stage, unstage and discard from real Git state" time="0" asserts="0" success="False" result="Failure" executed="True">
+                <failure>
+                  <message>This test should run but it did not. Most likely a setup in some parent block failed.</message>
+                  <stack-trace />
+                </failure>
+              </test-case>
+              <test-case description="handles an empty repository selection safely" name="Real Git selection and action previews.handles an empty repository selection safely" time="0" asserts="0" success="False" result="Failure" executed="True">
+                <failure>
+                  <message>This test should run but it did not. Most likely a setup in some parent block failed.</message>
+                  <stack-trace />
+                </failure>
+              </test-case>
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="Prompt, finder and diff behavior" executed="True" result="Failure" success="False" time="0" asserts="0" description="Prompt, finder and diff behavior">
+            <results>
+              <test-case description="renders compact, normal and rich prompts without discovering projects" name="Prompt, finder and diff behavior.renders compact, normal and rich prompts without discovering projects" time="0" asserts="0" success="False" result="Failure" executed="True">
+                <failure>
+                  <message>This test should run but it did not. Most likely a setup in some parent block failed.</message>
+                  <stack-trace />
+                </failure>
+              </test-case>
+              <test-case description="restores the exact previous prompt and supports repeated enabling" name="Prompt, finder and diff behavior.restores the exact previous prompt and supports repeated enabling" time="0" asserts="0" success="False" result="Failure" executed="True">
+                <failure>
+                  <message>This test should run but it did not. Most likely a setup in some parent block failed.</message>
+                  <stack-trace />
+                </failure>
+              </test-case>
+              <test-case description="preserves a prompt installed after SYSTEMCMD" name="Prompt, finder and diff behavior.preserves a prompt installed after SYSTEMCMD" time="0" asserts="0" success="False" result="Failure" executed="True">
+                <failure>
+                  <message>This test should run but it did not. Most likely a setup in some parent block failed.</message>
+                  <stack-trace />
+                </failure>
+              </test-case>
+              <test-case description="matches ordered fuzzy subsequences and rejects nonmatches" name="Prompt, finder and diff behavior.matches ordered fuzzy subsequences and rejects nonmatches" time="0" asserts="0" success="False" result="Failure" executed="True">
+                <failure>
+                  <message>This test should run but it did not. Most likely a setup in some parent block failed.</message>
+                  <stack-trace />
+                </failure>
+              </test-case>
+              <test-case description="command center exposes core actions in noninteractive shells" name="Prompt, finder and diff behavior.command center exposes core actions in noninteractive shells" time="0" asserts="0" success="False" result="Failure" executed="True">
+                <failure>
+                  <message>This test should run but it did not. Most likely a setup in some parent block failed.</message>
+                  <stack-trace />
+                </failure>
+              </test-case>
+              <test-case description="selects readable diff layouts and strips terminal control input" name="Prompt, finder and diff behavior.selects readable diff layouts and strips terminal control input" time="0" asserts="0" success="False" result="Failure" executed="True">
+                <failure>
+                  <message>This test should run but it did not. Most likely a setup in some parent block failed.</message>
+                  <stack-trace />
+                </failure>
+              </test-case>
+              <test-case description="uses offline Brain without starting a job" name="Prompt, finder and diff behavior.uses offline Brain without starting a job" time="0" asserts="0" success="False" result="Failure" executed="True">
+                <failure>
+                  <message>This test should run but it did not. Most likely a setup in some parent block failed.</message>
+                  <stack-trace />
+                </failure>
+              </test-case>
+              <test-case description="publishes structured test counts without parsing console text" name="Prompt, finder and diff behavior.publishes structured test counts without parsing console text" time="0" asserts="0" success="False" result="Failure" executed="True">
+                <failure>
+                  <message>This test should run but it did not. Most likely a setup in some parent block failed.</message>
+                  <stack-trace />
+                </failure>
+              </test-case>
+            </results>
+          </test-suite>
+          <test-suite type="TestFixture" name="Portable installer" executed="True" result="Failure" success="False" time="0" asserts="0" description="Portable installer">
+            <results>
+              <test-case description="installs all files, preserves profiles, is idempotent and uninstalls only its block" name="Portable installer.installs all files, preserves profiles, is idempotent and uninstalls only its block" time="0" asserts="0" success="False" result="Failure" executed="True">
+                <failure>
+                  <message>This test should run but it did not. Most likely a setup in some parent block failed.</message>
+                  <stack-trace />
+                </failure>
+              </test-case>
+              <test-case description="refuses an unmanaged installation directory" name="Portable installer.refuses an unmanaged installation directory" time="0" asserts="0" success="False" result="Failure" executed="True">
+                <failure>
+                  <message>This test should run but it did not. Most likely a setup in some parent block failed.</message>
+                  <stack-trace />
+                </failure>
+              </test-case>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+      <test-suite type="TestFixture" name="C:\Users\kod\Documents\PowerShell\Dotfiles\tests\SystemCmd.Tests.ps1" executed="True" result="Success" success="True" time="2.57" asserts="0" description="C:\Users\kod\Documents\PowerShell\Dotfiles\tests\SystemCmd.Tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="SystemCmd" executed="True" result="Success" success="True" time="2.2922" asserts="0" description="SystemCmd">
+            <results>
+              <test-suite type="TestFixture" name="SystemCmd.Platform" executed="True" result="Success" success="True" time="0.0773" asserts="0" description="SystemCmd.Platform">
+                <results>
+                  <test-case description="identifies a supported platform" name="SystemCmd.Platform.identifies a supported platform" time="0.0426" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="exposes a valid default config" name="SystemCmd.Platform.exposes a valid default config" time="0.0039" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="detects terminal capabilities" name="SystemCmd.Platform.detects terminal capabilities" time="0.0107" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="SystemCmd.UI engine" executed="True" result="Success" success="True" time="0.1424" asserts="0" description="SystemCmd.UI engine">
+                <results>
+                  <test-case description="strips ANSI for width measurement" name="SystemCmd.UI engine.strips ANSI for width measurement" time="0.0207" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="fits text to an exact visible width (pad and truncate)" name="SystemCmd.UI engine.fits text to an exact visible width (pad and truncate)" time="0.011" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="renders a panel with borders" name="SystemCmd.UI engine.renders a panel with borders" time="0.0295" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="SystemCmd.Git parsing" executed="True" result="Success" success="True" time="1.2302" asserts="0" description="SystemCmd.Git parsing">
+                <results>
+                  <test-case description="parses numstat lines" name="SystemCmd.Git parsing.parses numstat lines" time="0.0054" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="maps porcelain status codes" name="SystemCmd.Git parsing.maps porcelain status codes" time="0.0056" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="reads a real repo status/diff" name="SystemCmd.Git parsing.reads a real repo status/diff" time="0.479" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="stages a file" name="SystemCmd.Git parsing.stages a file" time="0.4721" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="SystemCmd.Changes UI" executed="True" result="Success" success="True" time="1.6908" asserts="0" description="SystemCmd.Changes UI">
+                <results>
+                  <test-case description="produces a header with the change summary" name="SystemCmd.Changes UI.produces a header with the change summary" time="0.4168" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="SystemCmd.Project detection" executed="True" result="Success" success="True" time="1.7858" asserts="0" description="SystemCmd.Project detection">
+                <results>
+                  <test-case description="detects node + pnpm from marker files" name="SystemCmd.Project detection.detects node + pnpm from marker files" time="0.0501" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="invents nothing for an empty directory" name="SystemCmd.Project detection.invents nothing for an empty directory" time="0.0381" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="SystemCmd.Buddy 3.0" executed="True" result="Success" success="True" time="2.104" asserts="0" description="SystemCmd.Buddy 3.0">
+                <results>
+                  <test-case description="builds a context object" name="SystemCmd.Buddy 3.0.builds a context object" time="0.1752" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="records repeated error fingerprints without storing output" name="SystemCmd.Buddy 3.0.records repeated error fingerprints without storing output" time="0.1385" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+              <test-suite type="TestFixture" name="SystemCmd.Commands" executed="True" result="Success" success="True" time="2.1537" asserts="0" description="SystemCmd.Commands">
+                <results>
+                  <test-case description="exports the systemcmd command" name="SystemCmd.Commands.exports the systemcmd command" time="0.0057" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="exports sc alias command" name="SystemCmd.Commands.exports sc alias command" time="0.0037" asserts="0" success="True" result="Success" executed="True" />
+                  <test-case description="help runs without throwing" name="SystemCmd.Commands.help runs without throwing" time="0.0321" asserts="0" success="True" result="Success" executed="True" />
+                </results>
+              </test-suite>
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>

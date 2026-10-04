@@ -295,6 +295,14 @@ main() {
 
   install_packages
   install_systemcmd_profile "${source_dir}"
+  if command -v pwsh >/dev/null 2>&1; then
+    pwsh -NoLogo -NoProfile -File "${source_dir}/scripts/Install-Core.ps1" \
+      -Destination "${HOME}/.local/share/systemcmd" \
+      -ProfilePath "${HOME}/.config/powershell/profile.ps1" \
+      -BashProfile "${HOME}/.bashrc" -ZshProfile "${HOME}/.zshrc"
+  else
+    warn 'Portable core requires PowerShell 7. Install pwsh, then run: pwsh -NoProfile -File scripts/Install-Core.ps1 -BashProfile ~/.bashrc -ZshProfile ~/.zshrc'
+  fi
   install_vscode_theme "${source_dir}"
   install_neovim_config "${source_dir}"
   install_claude_code

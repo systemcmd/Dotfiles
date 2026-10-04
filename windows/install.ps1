@@ -174,8 +174,6 @@ function Ensure-ProfileBootstrap {
         New-Item -ItemType Directory -Path $profileDir -Force | Out-Null
     }
 
-    $backupPattern = 'function SystemCmd|systemcmd bootstrap|MEVCUT KOMUTLAR VE FONKSIYONLAR'
-
     if (-not (Test-Path -LiteralPath $ProfilePath)) {
         Set-Content -LiteralPath $ProfilePath -Value $BootstrapBlock -Encoding UTF8
         return
@@ -183,17 +181,10 @@ function Ensure-ProfileBootstrap {
 
     $content = Get-Content -LiteralPath $ProfilePath -Raw
     if ($content -match 'systemcmd bootstrap') {
-        Set-Content -LiteralPath $ProfilePath -Value $BootstrapBlock -Encoding UTF8
         return
     }
-
-    if ($content -match $backupPattern) {
-        $backupPath = '{0}.bak-{1}' -f $ProfilePath, (Get-Date -Format 'yyyyMMddHHmmss')
-        Copy-Item -LiteralPath $ProfilePath -Destination $backupPath -Force
-        Set-Content -LiteralPath $ProfilePath -Value $BootstrapBlock -Encoding UTF8
-        return
-    }
-
+    $backupPath = '{0}.bak-{1}' -f $ProfilePath, (Get-Date -Format 'yyyyMMddHHmmss')
+    Copy-Item -LiteralPath $ProfilePath -Destination $backupPath -Force
     Add-Content -LiteralPath $ProfilePath -Value ("`r`n" + $BootstrapBlock) -Encoding UTF8
 }
 
@@ -424,6 +415,10 @@ if (Test-Path -LiteralPath `$systemCmdProfile) {
 Write-Step 'Profil bootstrap dosyalari ayarlaniyor.'
 Ensure-ProfileBootstrap -ProfilePath $pwshProfilePath -BootstrapBlock $bootstrapBlock
 Ensure-ProfileBootstrap -ProfilePath $legacyProfilePath -BootstrapBlock $bootstrapBlock
+if ($pwshPath) {
+    & $pwshPath -NoLogo -NoProfile -File (Join-Path $resolvedSourceDir 'scripts/Install-Core.ps1') -Destination (Join-Path $documentsDir 'PowerShell/systemcmd-core') -ProfilePath $pwshProfilePath
+    if ($LASTEXITCODE -ne 0) { throw 'Portable SYSTEMCMD core installation failed.' }
+}
 Install-SystemCmdVSCodeTheme -SourceDir $resolvedSourceDir
 Write-Step 'Neovim konfigurasyonu ayarlaniyor.'
 Install-SystemCmdNeovimConfig -SourceDir $resolvedSourceDir
