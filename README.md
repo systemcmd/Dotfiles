@@ -42,6 +42,34 @@ Kurulum:
 - `%LOCALAPPDATA%\nvim` altina `systemcmd` Neovim ayarlarini kurar
 - Var olan profili ezmek yerine bootstrap satiri ekler
 
+### macOS (native zsh + Ghostty)
+
+```bash
+bash macos/install.sh
+```
+
+PowerShell gerektirmez. Kurulum:
+
+- `macos/Brewfile` ile `fzf`, `bat`, `eza`, `fd`, `ripgrep`, `zoxide`, `git-delta`, `btop`, `lazygit`, `zellij`, Ghostty ve JetBrainsMono Nerd Font kurar
+- `~/.local/share/systemcmd/macos` -> repo'ya symlink (`--copy` ile kopya)
+- `~/.config/ghostty/config` ve `sc theme` ile uretilen renk dosyasi
+- `~/.zshrc` yedeklenir, sonuna tek satirlik bootstrap eklenir
+
+| Kisayol / komut | Is |
+| --- | --- |
+| `Ctrl+R` | Favorili gecmis. `f` (arama bosken) veya `Ctrl+S` ile favori ac/kapat |
+| `Ctrl+F` | Dosya secici, klasor yazip basinca o klasorun ici |
+| `Ctrl+G` | Git gezgini: dosyalar, `Ctrl+B` branch, `Ctrl+L` commit, `Ctrl+T` stash |
+| `Ctrl+P` | Proje atlama |
+| `Alt+E` | Satirdaki komutu AI ile acikla |
+| `?? <istek>` | Dogal dilden komut (claude CLI) |
+| `fix` | Son hatali komutu duzelt |
+| `sc run` | Projeye gore gorevler (flutter, npm, cargo, make...) |
+| `sc env` | `.env` dosyasini guvenli yukle (kod calistirmaz) |
+| `sc theme` | `systemcmd`, `neon`, `matrix`, `sunset` |
+| `sc layout` | zellij: editor + shell + lazygit |
+| `Alt+Space` | Ghostty quick terminal (her yerden) |
+
 ### Linux
 
 Repo'yu indiren kullanici masaustu ortaminda `install-linux.desktop` dosyasina cift tiklayabilir.
