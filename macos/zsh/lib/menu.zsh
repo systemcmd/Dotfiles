@@ -25,6 +25,13 @@ $(_sc_c cyan)%Bkomutlar%b%f
   $(_sc_c green)sc doctor%f        kurulum kontrolu
   $(_sc_c green)z <parca>%f        akilli cd (zoxide)  $(_sc_c muted)zi: interaktif%f
 
+$(_sc_c cyan)%BBuddy%b%f  $(_sc_c muted)(companion — Windows/Mac/Linux ortak)%f
+
+  $(_sc_c green)buddy%f            companion karti   $(_sc_c muted)buddy hatch: yumurtayi kir%f
+  $(_sc_c green)buddy pet%f        onu oksa          $(_sc_c green)buddy list%f  17 pet
+  $(_sc_c green)buddyxp%f          XP / seviye / seri
+  $(_sc_c green)bp%f               aktif buddy'nin gucunu calistir
+
 $(_sc_c cyan)%BGhostty%b%f
 
   $(_sc_c green)Alt+Space%f        her yerden acilan terminal (quick terminal)
@@ -98,6 +105,9 @@ sc_menu() {
   command -v fzf >/dev/null || { sc_keys; return; }
   local items=(
     "run|Proje gorevleri (flutter/npm/cargo...)"
+    "buddy|Buddy companion karti"
+    "buddyxp|Buddy XP / seviye"
+    "buddylist|Buddy koleksiyonu (17 pet)"
     "keys|Tum kisayollar ve komutlar"
     "doctor|Kurulum kontrolu"
     "theme|Tema degistir"
@@ -135,6 +145,10 @@ systemcmd() {
     ip) sc_ip ;;
     stats) sc_stats ;;
     welcome) sc_welcome ;;
+    buddy) buddy "$@" ;;
+    bp|power) bp ;;
+    buddyxp|xp) buddyxp ;;
+    buddylist) buddylist ;;
     update) sc_update ;;
     core)
       local bridge="${SYSTEMCMD_ROOT:A:h:h}/shell/Invoke-SystemCmd.ps1"
