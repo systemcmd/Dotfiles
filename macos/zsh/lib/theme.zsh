@@ -23,7 +23,9 @@ sc_theme_load() {
   typeset -g SYSTEMCMD_THEME_NAME="$name"
 
   export SYSTEMCMD_FZF_COLOR="fg:${SC_COLOR[fg]},fg+:${SC_COLOR[green]},bg:-1,bg+:${SC_COLOR[selection]},gutter:-1,prompt:${SC_COLOR[cyan]},pointer:${SC_COLOR[magenta]},marker:${SC_COLOR[green]},spinner:${SC_COLOR[cyan]},hl:${SC_COLOR[blue]},hl+:${SC_COLOR[cyan]},info:${SC_COLOR[muted]},border:${SC_COLOR[surface]},preview-border:${SC_COLOR[surface]},header:${SC_COLOR[muted]},label:${SC_COLOR[cyan]}"
-  export FZF_DEFAULT_OPTS="--layout=reverse --border=rounded --cycle --info=inline-right --color=${SYSTEMCMD_FZF_COLOR}"
+  # --no-mouse: fzf fareyi/trackpad'i yakalamasin (cikinca iz birakip prompt'a
+  # fare kodlari yaziyordu). Zaten klavyeyle kullaniliyor.
+  export FZF_DEFAULT_OPTS="--no-mouse --layout=reverse --border=rounded --cycle --info=inline-right --color=${SYSTEMCMD_FZF_COLOR}"
 
   # zsh-autosuggestions / zsh-syntax-highlighting yuklendiyse renklerini paletten al
   typeset -g ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=${SC_COLOR[muted]}"

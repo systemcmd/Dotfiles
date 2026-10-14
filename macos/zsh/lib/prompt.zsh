@@ -64,6 +64,9 @@ _sc_prompt_preexec() { _sc_cmd_start=$EPOCHREALTIME; }
 
 _sc_prompt_precmd() {
   _sc_last_status=$?
+  # Guvenlik: bir program (fzf, nvim...) fare izleme modunu acik birakmissa kapat
+  # ki trackpad'e dokununca prompt'a fare kodlari yazilmasin.
+  print -n '\e[?1000l\e[?1002l\e[?1003l\e[?1006l\e[?1015l'
   _sc_last_duration=""
   if (( _sc_cmd_start > 0 )); then
     local elapsed=$(( EPOCHREALTIME - _sc_cmd_start ))
