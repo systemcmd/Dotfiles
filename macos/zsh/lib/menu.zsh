@@ -22,6 +22,12 @@ $(_sc_c cyan)%Bkomutlar%b%f
   $(_sc_c green)sc ask <soru>%f    AI'a soru sor
   $(_sc_c green)sc theme [ad]%f    tema degistir  $(_sc_c muted)($(sc_theme_names | tr '\n' ' '))%f
   $(_sc_c green)sc layout%f        zellij calisma duzeni (editor + shell + git)
+  $(_sc_c green)sc dashboard%f     canli sistem panosu (q ile cik)
+  $(_sc_c green)sc wrapped%f       kisisel shell raporu
+  $(_sc_c green)sc tips%f          ipucu galerisi  $(_sc_c muted)(sc tip: tek rastgele)%f
+  $(_sc_c green)sc config%f        ayarlar (W11 ile ortak json)
+  $(_sc_c green)cloudhelp%f        Claude Code TR referansi
+  $(_sc_c green)gco glog gst%f     $(_sc_c muted)gstash gwip gunwip gbd — git kisayollari%f
   $(_sc_c green)sc sys%f           pil (saglik, dongu), RAM, disk, ag
   $(_sc_c green)sc doctor%f        kurulum kontrolu
   $(_sc_c green)z <parca>%f        akilli cd (zoxide)  $(_sc_c muted)zi: interaktif%f
@@ -117,7 +123,11 @@ sc_menu() {
     "ports|Dinlenen portlar"
     "sys|Pil, RAM, disk, ag (ayrintili)"
     "ip|LAN ve WAN IP"
+    "dashboard|Canli sistem panosu (CPU/RAM/disk/pil)"
+    "wrapped|Kisisel shell raporu"
+    "tips|Ipucu galerisi"
     "stats|En cok kullanilan komutlar"
+    "config|Ayarlar (~/.systemcmd/config.json)"
     "welcome|Karsilama ekrani"
     "update|systemcmd guncelle (git pull)"
     "core|PowerShell cekirdegi (Buddy, Brain, Live...)"
@@ -146,6 +156,11 @@ systemcmd() {
     ports) sc_ports ;;
     ip) sc_ip ;;
     sys|info|pil|battery) sc_sys ;;
+    dashboard|dash) sc_dashboard ;;
+    tips) sc_tips ;;
+    tip) sc_tip ;;
+    wrapped) sc_wrapped ;;
+    config|cfg) sc_config "$@" ;;
     stats) sc_stats ;;
     welcome) sc_welcome ;;
     buddy) buddy "$@" ;;

@@ -10,7 +10,7 @@ typeset -g SYSTEMCMD_HOME="${XDG_CONFIG_HOME:-$HOME/.config}/systemcmd"
 zmodload zsh/datetime 2>/dev/null
 autoload -Uz add-zsh-hook
 
-for _sc_mod in theme core prompt history files git projects ai buddy sysinfo menu welcome; do
+for _sc_mod in theme core prompt history files git projects ai buddy sysinfo extras menu welcome; do
   source "$SYSTEMCMD_ROOT/lib/${_sc_mod}.zsh"
 done
 unset _sc_mod
