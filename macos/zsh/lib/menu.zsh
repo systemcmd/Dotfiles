@@ -22,6 +22,7 @@ $(_sc_c cyan)%Bkomutlar%b%f
   $(_sc_c green)sc ask <soru>%f    AI'a soru sor
   $(_sc_c green)sc theme [ad]%f    tema degistir  $(_sc_c muted)($(sc_theme_names | tr '\n' ' '))%f
   $(_sc_c green)sc layout%f        zellij calisma duzeni (editor + shell + git)
+  $(_sc_c green)sc sys%f           pil (saglik, dongu), RAM, disk, ag
   $(_sc_c green)sc doctor%f        kurulum kontrolu
   $(_sc_c green)z <parca>%f        akilli cd (zoxide)  $(_sc_c muted)zi: interaktif%f
 
@@ -114,6 +115,7 @@ sc_menu() {
     "env|.env yukle"
     "layout|Zellij calisma duzeni"
     "ports|Dinlenen portlar"
+    "sys|Pil, RAM, disk, ag (ayrintili)"
     "ip|LAN ve WAN IP"
     "stats|En cok kullanilan komutlar"
     "welcome|Karsilama ekrani"
@@ -143,6 +145,7 @@ systemcmd() {
     layout) sc_layout ;;
     ports) sc_ports ;;
     ip) sc_ip ;;
+    sys|info|pil|battery) sc_sys ;;
     stats) sc_stats ;;
     welcome) sc_welcome ;;
     buddy) buddy "$@" ;;

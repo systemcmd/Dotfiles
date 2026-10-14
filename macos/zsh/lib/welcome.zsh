@@ -24,26 +24,14 @@ sc_welcome() {
   print
   for l in "${logo[@]}"; do _sc_gradient "$l" "$c1" "$c2"; done
 
-  # Yavas olanlar (pmset ~180ms) onbellekten okunur, arka planda tazelenir
-  local cache="$SYSTEMCMD_HOME/welcome-cache" batt="" disk="" ip="" load up
-  [[ -r "$cache" ]] && IFS='|' read -r batt disk ip < "$cache"
-  ( {
-      print -r -- "$(pmset -g batt 2>/dev/null | grep -Eo '[0-9]+%' | head -1)|$(df -h / 2>/dev/null | awk 'NR==2 {print $4 " bos"}')|$(ipconfig getifaddr en0 2>/dev/null)"
-    } >| "$cache.tmp" && mv -f "$cache.tmp" "$cache" ) &>/dev/null &!
-
-  local -a sys=("${(@f)$(sysctl -n vm.loadavg kern.boottime 2>/dev/null)}")
-  load="${${(z)sys[1]}[2]}"
-  local boot="${${sys[2]#*sec = }%%,*}"
-  if [[ "$boot" == <-> ]]; then
-    local s=$(( EPOCHSECONDS - boot ))
-    up="$(( s % 86400 / 3600 ))sa $(( s % 3600 / 60 ))dk"
-    (( s >= 86400 )) && up="$(( s / 86400 ))g $up"
-  fi
-
+  sc_sys_collect
   local m="${SC_COLOR[muted]}" f="${SC_COLOR[fg]}"
-  batt="${batt//\%/%%}" disk="${disk//\%/%%}"
-  print -P "  %F{$m}$(strftime '%d %b %a %H:%M' $EPOCHSECONDS) · %F{$f}%n@%m%F{$m} · yuk %F{$f}${load:-?}%F{$m} · acik %F{$f}${up:-?}%f"
-  print -P "  %F{$m}disk %F{$f}${disk:-?}%F{$m} · pil %F{$f}${batt:-AC}%F{$m} · ip %F{$f}${ip:-yok}%F{$m} · tema %F{$f}$SYSTEMCMD_THEME_NAME%f"
+  local batt="$(sc_sys_batt_text)" bc="$(sc_sys_batt_color)"
+  local mem="$(_sc_gib ${SC_SYS[mem_used]})/$(_sc_gib ${SC_SYS[mem_total]}) GB"
+  local disk="$(_sc_gb ${SC_SYS[disk_free]}) GB bos"
+  local net="${SC_SYS[ip]:-baglanti yok}${SC_SYS[vpn]:+ · VPN}"
+  print -P "  %F{$m}$(strftime '%d %b %a %H:%M' $EPOCHSECONDS) · %F{$f}%n@%m%F{$m} · yuk %F{$f}${SC_SYS[load]}%F{$m}/${SC_SYS[ncpu]} · acik %F{$f}${SC_SYS[uptime]:-?}%f"
+  print -P "  %F{$m}pil %F{$bc}${batt//\%/%%}%F{$m} · ram %F{$f}${mem}%F{$m} · disk %F{$f}${disk}%F{$m} · ip %F{$f}${net}%f"
 
   local -a tips=(
     "Ctrl+R'de f'ye bas: komut favori olur, hep ustte kalir"
