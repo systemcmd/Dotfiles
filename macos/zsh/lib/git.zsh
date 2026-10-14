@@ -69,3 +69,74 @@ sc-git-widget() {
 
 zle -N sc-git-widget
 bindkey '^G' sc-git-widget
+
+# ── W11 isimli git komutlari ────────────────────────────────────────────────
+# Kullanicinin .zshrc'sindeki cakisan alias'lari (gco='git checkout' gibi) kaldir
+unalias gco glog gst gstash gwip gunwip gbd 2>/dev/null
+_sc_in_git() { git rev-parse --is-inside-work-tree >/dev/null 2>&1; }
+
+gst() { _sc_in_git || { print 'git deposu degil.'; return 1; }; git -c color.status=always status -sb; }
+
+gco() {  # branch/tag checkout (fzf, log onizleme)
+  _sc_in_git || { print 'git deposu degil.'; return 1; }
+  command -v fzf >/dev/null || { print 'fzf yok.'; return 1; }
+  local b
+  b="$(git branch -a --format '%(refname:short)' 2>/dev/null | grep -v '-> ' | awk '!s[$0]++' |
+    fzf --prompt='checkout > ' --ansi --preview='git log --oneline --color=always -15 {}' --preview-window='right,60%')" || return
+  [[ -n "$b" ]] && git checkout "${b#origin/}"
+}
+
+glog() {  # interaktif git log
+  _sc_in_git || { print 'git deposu degil.'; return 1; }
+  command -v fzf >/dev/null || { print 'fzf yok.'; return 1; }
+  local pager='less -R'; command -v delta >/dev/null && pager='delta'
+  local sel
+  sel="$(git log --oneline --color=always --all 2>/dev/null |
+    fzf --ansi --no-sort --prompt='log > ' \
+      --preview='git show --stat --color=always {1} | '"${SYSTEMCMD_BAT:-cat}" --preview-window='right,60%')" || return
+  local h="${sel%% *}"
+  [[ -n "$h" ]] && eval "git show --color=always $h | $pager"
+}
+
+gstash() {  # stash gezgini — Enter: apply, Ctrl+D: drop, Ctrl+P: pop
+  _sc_in_git || { print 'git deposu degil.'; return 1; }
+  command -v fzf >/dev/null || { print 'fzf yok.'; return 1; }
+  git stash list >/dev/null 2>&1 && [[ -n "$(git stash list)" ]] || { print 'Stash yok.'; return 0; }
+  local out k ref
+  out="$(git stash list --color=always |
+    fzf --ansi --prompt='stash > ' --expect=ctrl-d,ctrl-p \
+      --header='Enter: apply · Ctrl+P: pop · Ctrl+D: drop' \
+      --preview='git stash show -p --color=always {1}' --preview-window='right,60%')" || return
+  k="${out%%$'\n'*}"; ref="${${out#*$'\n'}%%:*}"
+  [[ -n "$ref" ]] || return
+  case "$k" in
+    ctrl-d) git stash drop "$ref" ;;
+    ctrl-p) git stash pop "$ref" ;;
+    *)      git stash apply "$ref" ;;
+  esac
+}
+
+gwip() {  # hizli wip commit
+  _sc_in_git || { print 'git deposu degil.'; return 1; }
+  git add -A && git commit -q -m "wip: $(date '+%Y-%m-%d %H:%M')" && print -P "%F{${SC_COLOR[green]}}wip kaydedildi.%f"
+}
+
+gunwip() {  # son wip commit'i geri al (soft)
+  _sc_in_git || { print 'git deposu degil.'; return 1; }
+  local msg; msg="$(git log -1 --format='%s' 2>/dev/null)"
+  [[ "$msg" == wip:* ]] || { print -P "%F{${SC_COLOR[orange]}}Son commit wip degil:%f $msg"; return 1; }
+  git reset --soft HEAD~1 && print -P "%F{${SC_COLOR[green]}}Wip geri alindi (soft reset).%f"
+}
+
+gbd() {  # branch sil (fzf coklu secim, Tab)
+  _sc_in_git || { print 'git deposu degil.'; return 1; }
+  command -v fzf >/dev/null || { print 'fzf yok.'; return 1; }
+  local cur; cur="$(git branch --show-current 2>/dev/null)"
+  local -a picked
+  picked=("${(@f)$(git branch --format '%(refname:short)' 2>/dev/null | grep -v "^${cur}\$" |
+    fzf --multi --prompt='sil > ' --header='Tab: coklu sec · Enter: sil' \
+      --preview='git log --oneline --color=always -10 {}' --preview-window='right,60%')}")
+  (( ${#picked} )) && [[ -n "${picked[1]}" ]] || return
+  local b
+  for b in "${picked[@]}"; do git branch -d "$b" 2>/dev/null || { print -P "%F{${SC_COLOR[orange]}}$b birlesmemis.%f -D ile zorla? (e/h)"; read -q && git branch -D "$b"; print; }; done
+}

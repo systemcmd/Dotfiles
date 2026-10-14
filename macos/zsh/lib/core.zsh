@@ -71,3 +71,16 @@ alias reload='exec zsh'
 alias path='print -rl -- $path'
 alias ports='sc ports'
 mkcd() { mkdir -p -- "$1" && cd -- "$1"; }
+
+# ── W11 profil alias/fonksiyonlari (macOS uyarlamasi) ───────────────────────
+alias c='clear'
+alias sil='clear'
+command -v nvim >/dev/null && alias vim='nvim'
+command -v tig  >/dev/null && alias tig='tig'
+alias ifconfig='ipconfig getifaddr en0; command ifconfig'
+alias st='open'              # Windows'ta Start-Process -> macOS'ta open
+rmrf() { rm -rf -- "$@"; }   # W11 rmrf
+which() {                    # W11 'which' = Get-Command benzeri, tum turleri goster
+  local a
+  for a in "$@"; do whence -va "$a"; done
+}
