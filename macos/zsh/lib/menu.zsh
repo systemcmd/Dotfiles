@@ -27,6 +27,9 @@ $(_sc_c cyan)%Bkomutlar%b%f
   $(_sc_c green)sc tips%f          ipucu galerisi  $(_sc_c muted)(sc tip: tek rastgele)%f
   $(_sc_c green)sc config%f        ayarlar (W11 ile ortak json)
   $(_sc_c green)cloudhelp%f        Claude Code TR referansi
+  $(_sc_c green)sc ssh%f           SSH baglanti yoneticisi  $(_sc_c muted)(add/rm)%f
+  $(_sc_c green)sc theme share%f   temayi kod olarak paylas  $(_sc_c muted)(install <kod>)%f
+  $(_sc_c green)para <miktar>%f    USD/EUR -> TRY  $(_sc_c green)ip%f  ag bilgisi  $(_sc_c green)ascii%f  yazi
   $(_sc_c green)gco glog gst%f     $(_sc_c muted)gstash gwip gunwip gbd — git kisayollari%f
   $(_sc_c green)sc sys%f           pil (saglik, dongu), RAM, disk, ag
   $(_sc_c green)sc doctor%f        kurulum kontrolu
@@ -128,6 +131,7 @@ sc_menu() {
     "tips|Ipucu galerisi"
     "stats|En cok kullanilan komutlar"
     "config|Ayarlar (~/.systemcmd/config.json)"
+    "ssh|SSH baglanti yoneticisi"
     "welcome|Karsilama ekrani"
     "update|systemcmd guncelle (git pull)"
     "core|PowerShell cekirdegi (Buddy, Brain, Live...)"
@@ -146,7 +150,12 @@ systemcmd() {
     menu) sc_menu ;;
     help|keys|-h|--help) sc_keys ;;
     doctor) sc_doctor ;;
-    theme) sc_theme_set "$@" ;;
+    theme)
+      case "$1" in
+        share) sc_theme_share ;;
+        install) sc_theme_install "$2" ;;
+        *) sc_theme_set "$@" ;;
+      esac ;;
     run) sc_run ;;
     env) if [[ "$1" == off ]]; then sc_env_unload; else sc_env "$@"; fi ;;
     ask) sc_ai_ask "$@" ;;
@@ -161,6 +170,7 @@ systemcmd() {
     tip) sc_tip ;;
     wrapped) sc_wrapped ;;
     config|cfg) sc_config "$@" ;;
+    ssh) sc_ssh "$2" "$3" ;;
     stats) sc_stats ;;
     welcome) sc_welcome ;;
     buddy) buddy "$@" ;;
