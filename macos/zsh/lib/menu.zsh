@@ -118,6 +118,7 @@ sc_menu() {
     "buddy|Buddy companion karti"
     "buddyxp|Buddy XP / seviye"
     "buddylist|Buddy koleksiyonu (17 pet)"
+    "hub|Komut paleti (hepsini ara + calistir)"
     "keys|Tum kisayollar ve komutlar"
     "doctor|Kurulum kontrolu"
     "theme|Tema degistir"
@@ -177,6 +178,9 @@ systemcmd() {
     bp|power) bp ;;
     buddyxp|xp) buddyxp ;;
     buddylist) buddylist ;;
+    hub|systemcmdhelp) sc_hub ;;
+    version|surum) sc_version ;;
+    perf) sc_perf ;;
     update) sc_update ;;
     core)
       local bridge="${SYSTEMCMD_ROOT:A:h:h}/shell/Invoke-SystemCmd.ps1"
@@ -187,3 +191,77 @@ systemcmd() {
   esac
 }
 sc() { systemcmd "$@"; }
+
+# ── systemcmdhelp: her sey tek fzf paletinde (ara + Enter ile calistir) ─────
+sc_hub() {
+  command -v fzf >/dev/null || { sc_keys; return; }
+  local R=$'\t'
+  local -a items=(
+    "KISAYOL${R}Ctrl+R${R}favorili gecmis arama (f/Ctrl+S favori)${R}:"
+    "KISAYOL${R}Ctrl+F${R}baglamsal dosya secici${R}:"
+    "KISAYOL${R}Ctrl+G${R}git gezgini (dosya/branch/commit/stash)${R}:"
+    "KISAYOL${R}Ctrl+P${R}proje atlama${R}:"
+    "KISAYOL${R}Alt+Space${R}Ghostty quick terminal${R}:"
+    "AI${R}sc ask${R}Claude'a soru sor${R}read -r 'q?soru: ' && sc ask \$q"
+    "AI${R}fix${R}son hatali komutu duzelt${R}fix"
+    "SISTEM${R}sc sys${R}pil/RAM/disk/ag ayrintili${R}sc sys"
+    "SISTEM${R}sc dashboard${R}canli sistem panosu${R}sc dashboard"
+    "SISTEM${R}ip${R}ag bilgisi${R}ip"
+    "SISTEM${R}para${R}USD/EUR -> TRY${R}read -r 'a?miktar: ' && para \$a"
+    "GIT${R}gst${R}kisa git durumu${R}gst"
+    "GIT${R}gco${R}interaktif branch checkout${R}gco"
+    "GIT${R}glog${R}interaktif commit gezgini${R}glog"
+    "GIT${R}gstash${R}stash gezgini${R}gstash"
+    "GIT${R}gwip${R}hizli wip commit${R}gwip"
+    "PROJE${R}sc run${R}proje gorevleri${R}sc run"
+    "PROJE${R}sc env${R}.env yukle${R}sc env"
+    "PROJE${R}sc layout${R}zellij calisma duzeni${R}sc layout"
+    "SHELL${R}sc wrapped${R}kisisel shell raporu${R}sc wrapped"
+    "SHELL${R}sc stats${R}en cok kullanilan komutlar${R}sc stats"
+    "SHELL${R}sc tips${R}ipucu galerisi${R}sc tips"
+    "SHELL${R}sc theme${R}tema degistir${R}sc theme"
+    "SHELL${R}sc config${R}ayarlar${R}sc config"
+    "SHELL${R}cloudhelp${R}Claude Code TR referansi${R}cloudhelp"
+    "SSH${R}sc ssh${R}baglanti yoneticisi${R}sc ssh"
+    "BUDDY${R}buddy${R}companion karti${R}buddy"
+    "BUDDY${R}buddy hatch${R}yumurtayi kir${R}buddy hatch"
+    "BUDDY${R}buddyxp${R}XP / seviye${R}buddyxp"
+    "BUDDY${R}bp${R}aktif buddy gucu${R}bp"
+    "BUDDY${R}buddylist${R}koleksiyon${R}buddylist"
+    "SISTEM${R}sc doctor${R}kurulum kontrolu${R}sc doctor"
+    "SISTEM${R}sc version${R}surum bilgisi${R}sc version"
+  )
+  local sel
+  sel="$(print -rl -- "${items[@]}" |
+    awk -F'\t' '{printf "\033[38;5;245m%-8s\033[0m \033[97m%-14s\033[0m \033[38;5;245m%s\033[0m\t%s\n", $1,$2,$3,$4}' |
+    fzf --ansi --delimiter='\t' --with-nth=1 --prompt='systemcmdhelp > ' \
+      --border-label=' systemcmd ' --height=85% \
+      --header='Yaz: ara · Enter: calistir · Esc: cik')" || return
+  local cmd="${sel##*$'\t'}"
+  [[ -z "$cmd" || "$cmd" == ':' ]] && { print -P "  %F{${SC_COLOR[muted]}}Bu bir kisayol — klavyeden kullan.%f"; return; }
+  print -z -- "$cmd"
+}
+
+sc_version() {
+  local root="${SYSTEMCMD_ROOT:A:h:h}"
+  local rev="?" date="?"
+  if [[ -d "$root/.git" ]]; then
+    rev="$(git -C "$root" rev-parse --short HEAD 2>/dev/null)"
+    date="$(git -C "$root" log -1 --format=%cd --date=short 2>/dev/null)"
+  fi
+  print -P "\n  %B%F{${SC_COLOR[cyan]}}systemcmd%f%b %F{${SC_COLOR[muted]}}native zsh (macOS)%f"
+  print -P "  %F{${SC_COLOR[muted]}}surum%f $rev  %F{${SC_COLOR[muted]}}· $date · $(sw_vers -productName) $(sw_vers -productVersion)%f"
+  print -P "  %F{${SC_COLOR[muted]}}buddy cekirdegi:%f ${SYSTEMCMD_CORE:-yok}\n"
+}
+
+sc_perf() {
+  print -P "  %F{${SC_COLOR[muted]}}acilis suresi olculuyor (5 ornek)...%f"
+  local i t total=0
+  for i in {1..5}; do
+    t="$( { /usr/bin/time zsh -i -c exit ; } 2>&1 | awk '/real/{print $1}' | tr ',' '.' )"
+    print -P "    #$i  %F{${SC_COLOR[cyan]}}${t}s%f"
+    total=$(( total + t ))
+  done
+  print -P "  %F{${SC_COLOR[green]}}ortalama: $(printf '%.3f' $(( total / 5.0 )))s%f\n"
+}
+alias systemcmdhelp='sc_hub'
